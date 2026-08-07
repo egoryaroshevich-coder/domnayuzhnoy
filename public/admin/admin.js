@@ -62,6 +62,37 @@ function setNotice(message = "", isError = false) {
   notice.classList.toggle("error", isError);
 }
 
+function hasJwtClockSkewError(result) {
+  const results = Array.isArray(result) ? result : [result];
+  return results.some(item => /JWT issued at future/i.test(item?.error?.message || ""));
+}
+
+async function withSessionClockSkewRetry(operation) {
+  let result = await operation();
+  let retried = false;
+
+  for (const delay of [1500, 3000]) {
+    if (!hasJwtClockSkewError(result)) {
+      if (retried) setNotice("");
+      return result;
+    }
+    retried = true;
+    setNotice("Синхронизируем защищённую сессию...");
+    await new Promise(resolve => setTimeout(resolve, delay));
+    await window.supabaseClient.auth.refreshSession();
+    result = await operation();
+  }
+
+  if (retried && !hasJwtClockSkewError(result)) setNotice("");
+  return result;
+}
+
+function adminErrorMessage(error, fallback) {
+  return /JWT issued at future/i.test(error?.message || "")
+    ? "Не удалось синхронизировать защищённую сессию. Обновите страницу."
+    : error?.message || fallback;
+}
+
 function servicesFor(booking) {
   const services = Array.isArray(booking.services)
     ? booking.services.filter(service => service && service !== "Дом")
@@ -276,13 +307,13 @@ function renderCalendar() {
 async function loadData(showMessage = false) {
   if (showMessage) setNotice("Обновляем данные...");
 
-  const [bookingsResult, datesResult] = await Promise.all([
+  const [bookingsResult, datesResult] = await withSessionClockSkewRetry(() => Promise.all([
     window.supabaseClient.from("bookings").select("*").order("created_at", { ascending: false }),
     window.supabaseClient.from("booked_dates").select("*")
-  ]);
+  ]));
 
   if (bookingsResult.error || datesResult.error) {
-    setNotice(bookingsResult.error?.message || datesResult.error?.message || "Не удалось загрузить данные.", true);
+    setNotice(adminErrorMessage(bookingsResult.error || datesResult.error, "Не удалось загрузить данные."), true);
     return;
   }
 
@@ -305,9 +336,11 @@ async function updateStatus(id, status) {
       return;
     }
   }
-  const { error } = await window.supabaseClient.from("bookings").update({ status }).eq("id", id);
+  const { error } = await withSessionClockSkewRetry(() =>
+    window.supabaseClient.from("bookings").update({ status }).eq("id", id)
+  );
   if (error) {
-    setNotice(error.message || "Не удалось изменить статус.", true);
+    setNotice(adminErrorMessage(error, "Не удалось изменить статус."), true);
     return;
   }
   await loadData();
@@ -397,9 +430,11 @@ editForm.addEventListener("submit", async event => {
     banquet: services.includes("Банкет"),
     comment: document.querySelector("#edit-comment").value.trim() || null
   };
-  const { error } = await window.supabaseClient.from("bookings").update(changes).eq("id", id);
+  const { error } = await withSessionClockSkewRetry(() =>
+    window.supabaseClient.from("bookings").update(changes).eq("id", id)
+  );
   if (error) {
-    document.querySelector("#dialog-error").textContent = error.message || "Не удалось сохранить изменения.";
+    document.querySelector("#dialog-error").textContent = adminErrorMessage(error, "Не удалось сохранить изменения.");
     return;
   }
   dialog.close();
@@ -454,7 +489,7 @@ document.querySelector("#admin-logout").addEventListener("click", async () => {
 });
 
 async function initializeAdmin() {
-  const { data, error } = await window.supabaseClient.auth.getUser();
+  const { data, error } = await withSessionClockSkewRetry(() => window.supabaseClient.auth.getUser());
   const user = data.user;
 
   if (error || !user) {
