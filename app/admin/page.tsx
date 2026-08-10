@@ -39,10 +39,15 @@ export default function AdminPage() {
               <div className="admin-stats" id="admin-stats"></div>
             </section>
 
-            <nav className="admin-tabs" aria-label="Разделы админ-панели">
-              <button className="active" type="button" data-admin-tab="bookings">Заявки</button>
-              <button type="button" data-admin-tab="calendar">Календарь</button>
-            </nav>
+            <div className="admin-view-bar">
+              <nav className="admin-tabs" aria-label="Разделы админ-панели">
+                <button className="active" type="button" data-admin-tab="bookings">Заявки</button>
+                <button type="button" data-admin-tab="calendar">Календарь</button>
+              </nav>
+              <button className="admin-primary manual-booking-open" id="manual-booking-open" type="button">
+                + Зарезервировать даты
+              </button>
+            </div>
 
             <p className="admin-notice" id="admin-notice" role="status"></p>
 
@@ -114,6 +119,44 @@ export default function AdminPage() {
             </label>
             <p className="admin-error" id="dialog-error"></p>
             <div className="dialog-actions"><button className="admin-secondary" type="button" id="dialog-cancel">Отмена</button><button className="admin-primary" type="submit">Сохранить</button></div>
+          </form>
+        </dialog>
+
+        <dialog className="booking-dialog manual-booking-dialog" id="manual-booking-dialog" aria-labelledby="manual-booking-title">
+          <form method="dialog" id="manual-booking-form">
+            <div className="dialog-head">
+              <div><p className="admin-eyebrow">Ручная бронь</p><h2 id="manual-booking-title">Зарезервировать даты</h2></div>
+              <button type="button" id="manual-booking-close" aria-label="Закрыть">×</button>
+            </div>
+            <p className="manual-booking-copy">Бронь сразу получит статус «Подтверждена», а выбранные ночи станут недоступны на сайте.</p>
+            <div className="manual-booking-grid">
+              <label className="dialog-field dialog-field-wide">Имя гостя или название брони
+                <input id="manual-name" type="text" maxLength={120} required autoComplete="off" />
+              </label>
+              <label className="dialog-field">Заезд
+                <input id="manual-check-in" type="date" required />
+              </label>
+              <label className="dialog-field">Выезд
+                <input id="manual-check-out" type="date" required />
+              </label>
+              <label className="dialog-field">Телефон
+                <input id="manual-phone" type="tel" maxLength={40} placeholder="Необязательно" autoComplete="tel" />
+              </label>
+              <label className="dialog-field">Количество гостей
+                <input id="manual-guests" type="number" min="1" max="20" step="1" defaultValue="1" required />
+              </label>
+              <label className="dialog-field dialog-field-wide">Стоимость, BYN
+                <input id="manual-total-price" type="number" min="0" step="1" defaultValue="0" required />
+              </label>
+            </div>
+            <label className="dialog-comment">Комментарий
+              <textarea id="manual-comment" maxLength={1000} rows={3} placeholder="Например, бронь по телефону или даты для владельца"></textarea>
+            </label>
+            <p className="admin-error manual-booking-error" id="manual-booking-error" role="alert"></p>
+            <div className="dialog-actions">
+              <button className="admin-secondary" type="button" id="manual-booking-cancel">Отмена</button>
+              <button className="admin-primary" type="submit" id="manual-booking-submit">Зарезервировать</button>
+            </div>
           </form>
         </dialog>
       </div>

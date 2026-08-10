@@ -13,6 +13,17 @@ const bookingsEmpty = document.querySelector("#bookings-empty");
 const stats = document.querySelector("#admin-stats");
 const dialog = document.querySelector("#booking-dialog");
 const editForm = document.querySelector("#booking-edit-form");
+const manualDialog = document.querySelector("#manual-booking-dialog");
+const manualForm = document.querySelector("#manual-booking-form");
+const manualName = document.querySelector("#manual-name");
+const manualPhone = document.querySelector("#manual-phone");
+const manualCheckIn = document.querySelector("#manual-check-in");
+const manualCheckOut = document.querySelector("#manual-check-out");
+const manualGuests = document.querySelector("#manual-guests");
+const manualTotalPrice = document.querySelector("#manual-total-price");
+const manualComment = document.querySelector("#manual-comment");
+const manualError = document.querySelector("#manual-booking-error");
+const manualSubmit = document.querySelector("#manual-booking-submit");
 const searchInput = document.querySelector("#booking-search");
 const calendarGrid = document.querySelector("#admin-calendar-grid");
 const calendarMonth = document.querySelector("#admin-calendar-month");
@@ -55,6 +66,27 @@ function formatDate(value) {
 
 function formatMoney(value) {
   return `${moneyFormatter.format(Number(value) || 0)} BYN`;
+}
+
+function addDays(value, days) {
+  const date = typeof value === "string" ? localDate(value) : new Date(value);
+  date.setDate(date.getDate() + days);
+  return isoDate(date);
+}
+
+function bookingPhoneHtml(booking) {
+  const phone = String(booking.phone || "").trim();
+  if (!phone || phone === "Не указан") {
+    return '<span class="cell-muted">Телефон не указан</span>';
+  }
+  return `<a href="tel:${escapeHtml(phone)}">${escapeHtml(phone)}</a>`;
+}
+
+function bookingOriginHtml(booking) {
+  if (booking.source === "manual") {
+    return '<span class="cell-muted manual-source">Добавлено вручную</span>';
+  }
+  return `<span class="cell-muted">${escapeHtml(booking.telegram || "Telegram не указан")}</span>`;
 }
 
 function setNotice(message = "", isError = false) {
@@ -197,7 +229,7 @@ function renderBookings() {
     const services = servicesFor(booking);
     const status = STATUS_LABELS[booking.status] || booking.status || "Новая";
     return `<tr data-booking-id="${escapeHtml(booking.id)}">
-      <td class="guest-cell" data-label="Гость"><b>${escapeHtml(booking.name)}</b><a href="tel:${escapeHtml(booking.phone)}">${escapeHtml(booking.phone)}</a><span class="cell-muted">${escapeHtml(booking.telegram || "Telegram не указан")}</span></td>
+      <td class="guest-cell" data-label="Гость"><b>${escapeHtml(booking.name)}</b>${bookingPhoneHtml(booking)}${bookingOriginHtml(booking)}</td>
       <td class="date-cell" data-label="Даты"><b>${formatDate(booking.check_in)} — ${formatDate(booking.check_out)}</b><span class="cell-muted">${escapeHtml(booking.created_at ? `Создана ${formatDate(booking.created_at)}` : "")}</span></td>
       <td data-label="Гости">${escapeHtml(booking.guests ?? ((booking.adults || 0) + (booking.children || 0)))}<span class="cell-muted">Взр. ${escapeHtml(booking.adults ?? 0)} · Дет. ${escapeHtml(booking.children ?? 0)}</span></td>
       <td data-label="Услуги"><div class="service-tags">${services.length ? services.map(item => `<span class="service-tag">${escapeHtml(item)}</span>`).join("") : '<span class="cell-muted">Только дом</span>'}</div></td>
@@ -261,7 +293,7 @@ function renderCalendarSelection() {
   calendarSelectionTitle.textContent = longDateFormatter.format(date);
   calendarSelectionList.innerHTML = related.length
     ? related.map(booking => `<button class="calendar-booking" type="button" data-open-booking="${escapeHtml(booking.id)}">
-        <span><b>${escapeHtml(booking.name)}</b><small>${escapeHtml(booking.phone)}</small></span>
+        <span><b>${escapeHtml(booking.name)}</b><small>${escapeHtml(booking.source === "manual" && booking.phone === "Не указан" ? "Добавлено вручную" : booking.phone)}</small></span>
         <span><b>${formatMoney(booking.total_price)}</b><small>${escapeHtml(STATUS_LABELS[booking.status] || booking.status)}</small></span>
       </button>`).join("")
     : '<p class="calendar-empty-copy">На эту дату активных заявок нет.</p>';
@@ -364,6 +396,7 @@ function openEditor(id) {
   document.querySelector("#booking-detail-grid").innerHTML = [
     detailItem("Имя", booking.name),
     detailItem("Статус", STATUS_LABELS[booking.status] || booking.status),
+    detailItem("Источник", booking.source === "manual" ? "Добавлено вручную" : "Заявка с сайта"),
     detailItem("Телефон", booking.phone),
     detailItem("Telegram", booking.telegram || "Не указан"),
     detailItem("Заезд", formatDate(booking.check_in)),
@@ -373,6 +406,99 @@ function openEditor(id) {
     detailItem("Создана", booking.created_at ? new Date(booking.created_at).toLocaleString("ru-RU") : "—", "detail-wide")
   ].join("");
   dialog.showModal();
+}
+
+function setManualBookingError(message = "") {
+  manualError.textContent = message;
+}
+
+function syncManualCheckout() {
+  if (!manualCheckIn.value) return;
+  const earliestCheckout = addDays(manualCheckIn.value, 1);
+  manualCheckOut.min = earliestCheckout;
+  if (!manualCheckOut.value || manualCheckOut.value < earliestCheckout) {
+    manualCheckOut.value = earliestCheckout;
+  }
+}
+
+function openManualBooking() {
+  const today = isoDate(new Date());
+  const initialCheckIn = selectedCalendarDate && selectedCalendarDate >= today
+    ? selectedCalendarDate
+    : today;
+
+  manualForm.reset();
+  manualCheckIn.min = today;
+  manualCheckIn.value = initialCheckIn;
+  manualCheckOut.value = addDays(initialCheckIn, 1);
+  syncManualCheckout();
+  setManualBookingError();
+  manualSubmit.disabled = false;
+  manualSubmit.textContent = "Зарезервировать";
+  manualDialog.showModal();
+  manualName.focus();
+}
+
+function manualBookingErrorMessage(error) {
+  const message = error?.message || "";
+  if (/DATES_UNAVAILABLE/i.test(message)) return "Эти даты уже заняты другой подтверждённой бронью.";
+  if (/INVALID_DATES/i.test(message)) return "Проверьте даты заезда и выезда.";
+  if (/INVALID_GUESTS/i.test(message)) return "Количество гостей должно быть от 1 до 20.";
+  if (/INVALID_PRICE/i.test(message)) return "Стоимость не может быть отрицательной.";
+  if (/NAME_REQUIRED/i.test(message)) return "Укажите имя гостя или название брони.";
+  return adminErrorMessage(error, "Не удалось зарезервировать даты.");
+}
+
+async function createManualBooking(event) {
+  event.preventDefault();
+  setManualBookingError();
+
+  const checkIn = manualCheckIn.value;
+  const checkOut = manualCheckOut.value;
+  const guests = Number(manualGuests.value);
+  const totalPrice = Number(manualTotalPrice.value);
+  const dates = new Set();
+
+  if (!checkIn || !checkOut || checkOut <= checkIn) {
+    setManualBookingError("Дата выезда должна быть позже даты заезда.");
+    return;
+  }
+
+  addRange(dates, checkIn, checkOut);
+  if ([...dates].some(date => bookedDates.has(date))) {
+    setManualBookingError("Эти даты уже заняты другой подтверждённой бронью.");
+    return;
+  }
+
+  manualSubmit.disabled = true;
+  manualSubmit.textContent = "Сохраняем...";
+
+  const { error } = await withSessionClockSkewRetry(() =>
+    window.supabaseClient.rpc("create_manual_booking", {
+      p_name: manualName.value.trim(),
+      p_phone: manualPhone.value.trim() || null,
+      p_check_in: checkIn,
+      p_check_out: checkOut,
+      p_guests: guests,
+      p_total_price: totalPrice,
+      p_comment: manualComment.value.trim() || null
+    })
+  );
+
+  manualSubmit.disabled = false;
+  manualSubmit.textContent = "Зарезервировать";
+
+  if (error) {
+    setManualBookingError(manualBookingErrorMessage(error));
+    return;
+  }
+
+  manualDialog.close();
+  selectedCalendarDate = checkIn;
+  const selectedDate = localDate(checkIn);
+  displayedMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+  await loadData();
+  setNotice(`Даты ${formatDate(checkIn)} — ${formatDate(checkOut)} зарезервированы вручную.`);
 }
 
 function csvCell(value) {
@@ -444,6 +570,11 @@ editForm.addEventListener("submit", async event => {
 
 document.querySelector("#dialog-close").addEventListener("click", () => dialog.close());
 document.querySelector("#dialog-cancel").addEventListener("click", () => dialog.close());
+document.querySelector("#manual-booking-open").addEventListener("click", openManualBooking);
+document.querySelector("#manual-booking-close").addEventListener("click", () => manualDialog.close());
+document.querySelector("#manual-booking-cancel").addEventListener("click", () => manualDialog.close());
+manualCheckIn.addEventListener("change", syncManualCheckout);
+manualForm.addEventListener("submit", createManualBooking);
 document.querySelector("#status-filters").addEventListener("click", event => {
   const button = event.target.closest("[data-filter]");
   if (!button) return;
