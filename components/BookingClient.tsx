@@ -4,10 +4,12 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Baby,
+  Bath,
   CalendarDays,
   Check,
   CircleAlert,
   Clock3,
+  Flame,
   KeyRound,
   LoaderCircle,
   Phone,
@@ -28,9 +30,12 @@ const steps = [
 
 type FieldErrors = Partial<Record<"name" | "phone" | "arrival" | "departure" | "guests", string>>;
 
+const wellnessOptions = [
+  { service: "Баня", price: "250 BYN", detail: "Без ограничения по времени", Icon: Flame },
+  { service: "Купель", price: "150–250 BYN", detail: "Отдельная горячая купель Фурако", Icon: Bath }
+];
+
 const serviceOptions = [
-  ["Баня", "250 BYN · вместе с купелью 400 BYN"],
-  ["Купель", "150-250 BYN"],
   ["Банкет", "40/45/50 BYN / гость"],
   ["День рождения", "Обсудим формат"],
   ["Свадьба / камерное торжество", "По согласованию"],
@@ -86,6 +91,12 @@ export function BookingClient() {
   }), [dates.arrival, dates.departure, guests, services]);
   const nights = useMemo(() => nightsCount(dates.arrival, dates.departure), [dates.arrival, dates.departure]);
   const saunaPackageSelected = services.includes("Баня") && services.includes("Купель");
+
+  const toggleService = (service: string, selected: boolean) => {
+    setSelectedServices((current) => selected
+      ? [...current, service]
+      : current.filter((item) => item !== service));
+  };
 
   const clearFieldError = (field: keyof FieldErrors) => {
     setFieldErrors((current) => {
@@ -244,22 +255,42 @@ export function BookingClient() {
             <div><UserRound /><input id="booking-telegram" name="telegram" placeholder="@username" /></div>
           </div>
 
+          <fieldset className="booking-wellness">
+            <legend>Отдельные услуги</legend>
+            <p className="booking-wellness-intro">Баню и купель можно выбрать независимо друг от друга</p>
+            <div className="booking-wellness-grid">
+              {wellnessOptions.map(({ service, price, detail, Icon }) => (
+                <label className="booking-wellness-option" key={service}>
+                  <input
+                    type="checkbox"
+                    name="services"
+                    value={service}
+                    checked={selectedServices.includes(service)}
+                    onChange={(event) => toggleService(service, event.target.checked)}
+                  />
+                  <span className="booking-wellness-card">
+                    <span className="booking-wellness-icon"><Icon /></span>
+                    <span className="booking-wellness-copy"><b>{service}</b><small>{detail}</small></span>
+                    <strong>{price}</strong>
+                    <span className="booking-wellness-check"><Check /></span>
+                  </span>
+                </label>
+              ))}
+            </div>
+            {saunaPackageSelected && <p className="booking-services-note"><Check /> Вы выбрали баню и купель отдельно. Для двух услуг действует цена комплекса 400 BYN.</p>}
+          </fieldset>
+
           <fieldset className="booking-services">
-            <legend>Что нужно учесть</legend>
+            <legend>Дополнительные пожелания</legend>
             {serviceOptions.map(([service, price]) => (
               <label key={service}><input
                 type="checkbox"
                 name="services"
                 value={service}
                 checked={selectedServices.includes(service)}
-                onChange={(event) => {
-                  setSelectedServices((current) => event.target.checked
-                    ? [...current, service]
-                    : current.filter((item) => item !== service));
-                }}
+                onChange={(event) => toggleService(service, event.target.checked)}
               /><span>{service} · {price}</span></label>
             ))}
-            {saunaPackageSelected && <p className="booking-services-note"><Check /> Выбран пакет «Баня + купель» за 400 BYN.</p>}
           </fieldset>
 
           <div className="booking-field booking-field-wide">

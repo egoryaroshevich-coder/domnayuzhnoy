@@ -494,6 +494,28 @@ body{font-size:16px}
 .sauna-video-grid figure{margin:0;min-width:0}
 .sauna-video-grid video{display:block;width:100%;aspect-ratio:9/16;max-height:720px;object-fit:cover;background:#050806;border:1px solid #ffffff1f}
 .sauna-video-grid figcaption{padding:15px 2px 0;color:#cbb58d;font-size:9px;text-transform:uppercase;letter-spacing:.17em}
+.booking-wellness{grid-column:1/-1;margin:5px 0 0;padding:0;border:0}
+.booking-wellness>legend{display:block;margin:0 0 4px;color:#5f6a64;font-size:10px;text-transform:uppercase;letter-spacing:.15em}
+.booking-wellness-intro{margin:0 0 14px;color:#89918c;font-size:10px}
+.booking-wellness-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.private-form .booking-wellness .booking-wellness-option{position:relative;display:block;min-width:0;margin:0;cursor:pointer}
+.private-form .booking-wellness-option>input{position:absolute;display:block;width:1px;height:1px;opacity:0;pointer-events:none}
+.private-form .booking-wellness span{margin:0;padding:0;border:0;text-transform:none;letter-spacing:0}
+.private-form .booking-wellness .booking-wellness-card{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;column-gap:15px;row-gap:3px;min-height:120px;padding:19px;border:1px solid #17221d24;border-radius:8px;background:#fff;transition:border-color .3s,background .3s,color .3s,transform .3s,box-shadow .3s}
+.booking-wellness-option:hover .booking-wellness-card{transform:translateY(-2px);border-color:#a18555;box-shadow:0 12px 30px #14201b0d}
+.booking-wellness-option>input:focus-visible+.booking-wellness-card{outline:2px solid #a18555;outline-offset:3px}
+.booking-wellness-option>input:checked+.booking-wellness-card{border-color:var(--ink);background:var(--ink);color:#fff}
+.private-form .booking-wellness .booking-wellness-icon{grid-row:1/3;width:44px;height:44px;display:grid;place-items:center;border-radius:50%;background:#eee8dc;color:#92754a}
+.booking-wellness-icon svg{width:21px;stroke-width:1.5}
+.private-form .booking-wellness .booking-wellness-copy{grid-column:2;grid-row:1;display:flex;min-width:0;flex-direction:column}
+.booking-wellness-copy b{font:24px/1.1 var(--serif);font-weight:400}
+.booking-wellness-copy small{margin-top:5px;color:#77817b;font-size:9px;line-height:1.35}
+.booking-wellness-card>strong{grid-column:2;grid-row:2;font:21px var(--serif);font-weight:400;white-space:nowrap}
+.private-form .booking-wellness .booking-wellness-check{grid-column:3;grid-row:1/3;width:24px;height:24px;display:grid;place-items:center;border:1px solid #17221d35;border-radius:50%;color:transparent;transition:.3s}
+.booking-wellness-check svg{width:13px}
+.booking-wellness-option>input:checked+.booking-wellness-card .booking-wellness-icon{background:#b89b68;color:#fff}
+.booking-wellness-option>input:checked+.booking-wellness-card .booking-wellness-copy small{color:#ffffff9c}
+.booking-wellness-option>input:checked+.booking-wellness-card .booking-wellness-check{border-color:#b89b68;background:#b89b68;color:#fff}
 .booking-services-note{display:flex;align-items:center;gap:9px;width:max-content;max-width:100%;margin:15px 0 0!important;padding:11px 14px;background:#dfd4c0;color:#5b4a2f;font-size:11px;line-height:1.5}
 .booking-services-note svg{width:16px;flex:0 0 auto}
 .extras-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -555,4 +577,8 @@ body{font-size:16px}
   .sauna-video-grid{grid-template-columns:repeat(3,78vw);gap:12px;margin-right:-20px}
   .sauna-video-grid video{max-height:none}
   .booking-services-note{width:100%}
+  .booking-wellness-grid{grid-template-columns:1fr}
+  .private-form .booking-wellness .booking-wellness-card{grid-template-columns:auto minmax(0,1fr) auto;column-gap:12px;min-height:108px;padding:16px}
+  .booking-wellness-card>strong{grid-column:2;font-size:19px}
+  .booking-wellness-check{grid-column:3;grid-row:1/3}
 }
