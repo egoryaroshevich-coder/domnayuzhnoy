@@ -39,6 +39,8 @@ export default function Contact() {
               <label>Формат поездки</label>
               <select>
                 <option>Уединённый отдых</option>
+                <option>Баня</option>
+                <option>Баня с купелью</option>
                 <option>Отдых для пары</option>
                 <option>Семейная встреча</option>
                 <option>День рождения</option>

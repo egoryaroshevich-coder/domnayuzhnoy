@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, BadgePercent, CalendarDays, Check, Flame, PartyPopper, Users } from "lucide-react";
+import { ArrowUpRight, BadgePercent, Bath, CalendarDays, Check, Flame, PartyPopper, Users } from "lucide-react";
 import { BookingBand, PageHero } from "@/components/UI";
 import { AvailabilityCalendar } from "@/components/AvailabilityCalendar";
 import { OffersCarousel, type Offer } from "@/components/OffersCarousel";
 
 export const metadata: Metadata = {
   title: "Цены и акции",
-  description: "Актуальные цены на аренду Дома на Южной, стоимость купели и банкета, акции и мини-календарь ближайшей доступности."
+  description: "Актуальные цены на аренду Дома на Южной, баню, комплекс бани с купелью и банкет, акции и ближайшая доступность."
 };
 
 const weekdays = [
@@ -80,11 +80,22 @@ export default function PricesPage() {
       <section className="extras-pricing editorial">
         <div className="extras-heading">
           <span>Дополнительные форматы</span>
-          <h2>Уютная купель.<br /><em>Пространство для компании.</em></h2>
+          <h2>Баня и купель.<br /><em>Пространство для компании.</em></h2>
         </div>
         <div className="extras-grid">
           <article>
             <Flame />
+            <span>Баня</span>
+            <h3>250 BYN</h3>
+            <ul>
+              <li><Check /> Баня без купели — 250 BYN</li>
+              <li><Check /> Без ограничений по времени</li>
+              <li><Check /> Баня вместе с купелью — 400 BYN</li>
+            </ul>
+            <p>Деревянная парная и отдельная комната отдыха для спокойного вечера с близкими.</p>
+          </article>
+          <article>
+            <Bath />
             <span>Купель Фурако</span>
             <h3>От 150 BYN</h3>
             <ul>
@@ -127,7 +138,7 @@ export default function PricesPage() {
 
       <section className="price-note">
         <Users />
-        <p>Дом рассчитан на 10 спальных мест. День рождения, отдых для пары, банкет, размещение с питомцами и дополнительные услуги согласовываются заранее.</p>
+        <p>Дом рассчитан на 10 спальных мест. Баню, комплекс с купелью, день рождения, банкет, размещение с питомцами и другие услуги согласовывайте заранее.</p>
       </section>
 
       <BookingBand />

@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Дом на Южной",
     short_name: "Дом на Южной",
-    description: "Аренда дома с террасой и купелью Фурако в Борисове.",
+    description: "Аренда дома с баней, террасой и купелью Фурако в Борисове.",
     start_url: "/",
     display: "standalone",
     background_color: "#0b1310",

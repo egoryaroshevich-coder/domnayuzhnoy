@@ -15,6 +15,7 @@ export type BookingCostInput = {
 
 export type BookingCosts = {
   houseCost: number;
+  saunaCost: number;
   hottubCost: number;
   banquetCost: number;
   totalCost: number;
@@ -85,7 +86,7 @@ export function uniqueServices(services: unknown) {
     .map((service) => clean(service, 60))
     .filter(Boolean)
     .map((service) => service === "Купель Фурако" ? "Купель" : service);
-  return [...new Set(["Дом", ...normalized])].slice(0, 12);
+  return [...new Set(["Дом", ...normalized])].slice(0, 16);
 }
 
 export function calculateBookingCosts({ checkIn, checkOut, guests, services }: BookingCostInput): BookingCosts {
@@ -104,18 +105,21 @@ export function calculateBookingCosts({ checkIn, checkOut, guests, services }: B
     }
   }
 
+  const saunaSelected = services.includes("Баня");
   const hottubSelected = services.includes("Купель") || services.includes("Купель Фурако");
   const waterChangeSelected = services.includes("Повторная смена воды");
-  const hottubBaseCost = !hottubSelected ? 0 : guests <= 2 ? 150 : guests <= 4 ? 200 : 250;
+  const saunaCost = saunaSelected ? 250 : 0;
+  const hottubBaseCost = !hottubSelected ? 0 : saunaSelected ? 150 : guests <= 2 ? 150 : guests <= 4 ? 200 : 250;
   const hottubCost = hottubBaseCost + (hottubSelected && waterChangeSelected ? 80 : 0);
   const banquetPricePerGuest = guests <= 10 ? 50 : guests <= 15 ? 45 : 40;
   const banquetCost = services.includes("Банкет") ? guests * banquetPricePerGuest : 0;
 
   return {
     houseCost,
+    saunaCost,
     hottubCost,
     banquetCost,
-    totalCost: houseCost + hottubCost + banquetCost
+    totalCost: houseCost + saunaCost + hottubCost + banquetCost
   };
 }
 

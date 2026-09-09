@@ -22,13 +22,14 @@ import { calculateBookingCosts, nightsCount, uniqueServices } from "@/lib/bookin
 const steps = [
   ["01", "Заявка", "Вы сообщаете даты, количество гостей и формат отдыха."],
   ["02", "Подтверждение", "Владелец проверяет свободные даты и уточняет актуальную стоимость."],
-  ["03", "Согласование", "Вы подтверждаете купель, размещение с питомцем или оформление события."],
+  ["03", "Согласование", "Вы подтверждаете баню, купель, размещение с питомцем или оформление события."],
   ["04", "Заезд", "Дом готовят к вашему приезду в согласованное время."]
 ];
 
 type FieldErrors = Partial<Record<"name" | "phone" | "arrival" | "departure" | "guests", string>>;
 
 const serviceOptions = [
+  ["Баня", "250 BYN · вместе с купелью 400 BYN"],
   ["Купель", "150-250 BYN"],
   ["Банкет", "40/45/50 BYN / гость"],
   ["День рождения", "Обсудим формат"],
@@ -84,6 +85,7 @@ export function BookingClient() {
     services
   }), [dates.arrival, dates.departure, guests, services]);
   const nights = useMemo(() => nightsCount(dates.arrival, dates.departure), [dates.arrival, dates.departure]);
+  const saunaPackageSelected = services.includes("Баня") && services.includes("Купель");
 
   const clearFieldError = (field: keyof FieldErrors) => {
     setFieldErrors((current) => {
@@ -257,17 +259,19 @@ export function BookingClient() {
                 }}
               /><span>{service} · {price}</span></label>
             ))}
+            {saunaPackageSelected && <p className="booking-services-note"><Check /> Выбран пакет «Баня + купель» за 400 BYN.</p>}
           </fieldset>
 
           <div className="booking-field booking-field-wide">
             <label htmlFor="booking-message">Особые пожелания</label>
-            <div className="booking-textarea"><textarea id="booking-message" rows={5} name="comment" maxLength={1200} placeholder="Например: нужен банкет на 8 человек, планируем приехать с небольшой собакой..." /></div>
+            <div className="booking-textarea"><textarea id="booking-message" rows={5} name="comment" maxLength={1200} placeholder="Например: хотим баню с купелью, нужен банкет на 8 человек, планируем приехать с небольшой собакой..." /></div>
           </div>
 
           <div className="booking-estimate booking-field-wide" aria-live="polite">
             <div><span>Даты</span><b>{nights ? `${nights} ${nights === 1 ? "сутки" : "суток"}` : "Выберите период"}</b></div>
             <div><span>Гости</span><b>{guests}</b></div>
             <div><span>Дом</span><b>{costs.houseCost} BYN</b></div>
+            <div><span>Баня</span><b>{costs.saunaCost} BYN</b></div>
             <div><span>Купель</span><b>{costs.hottubCost} BYN</b></div>
             <div><span>Банкет</span><b>{costs.banquetCost} BYN</b></div>
             <div className="booking-estimate-total"><span>Предварительно</span><b>{costs.totalCost} BYN</b></div>

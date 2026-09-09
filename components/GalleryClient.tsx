@@ -12,6 +12,7 @@ type GalleryCategory =
   | "kitchen"
   | "grounds"
   | "bath"
+  | "sauna"
   | "relaxation";
 
 type GalleryItem = {
@@ -25,6 +26,10 @@ type GalleryItem = {
 
 const shots: GalleryItem[] = [
   ["album-03.jpg", "grounds", "BBQ-зона", "Дом для отдыха", "Терраса, купель Фурако и Дом на Южной", "landscape"],
+  ["sauna-01.jpg", "sauna", "Баня", "Новая баня во дворе", "Деревянная баня Дома на Южной", "landscape"],
+  ["sauna-03.jpg", "sauna", "Баня", "Тёплая деревянная парная", "Парная с печью и дубовыми вениками", "portrait"],
+  ["sauna-07.jpg", "sauna", "Баня", "Баня и купель одним вечером", "Горячая купель рядом с новой баней", "landscape"],
+  ["sauna-02.jpg", "sauna", "Баня", "Комната отдыха", "Деревянная комната отдыха в бане", "portrait"],
   ["album-04.jpg", "bath", "Купель", "Купель рядом с террасой", "Купель Фурако рядом с террасой", "portrait"],
   ["album-29.jpg", "exterior", "Дом снаружи", "Дом среди зелени", "Внешний вид Дома на Южной в Борисове", "landscape"],
   ["album-36.jpg", "grounds", "BBQ-зона", "Место для долгого вечера", "Уютная терраса с шезлонгами", "portrait"],
@@ -57,7 +62,13 @@ const shots: GalleryItem[] = [
   ["album-33.jpg", "kitchen", "Кухня", "Удобная кухня для компании", "Кухонная зона с техникой", "portrait"],
   ["album-34.jpg", "relaxation", "Зона отдыха", "Уютная пауза на террасе", "Зона отдыха на террасе", "standard"],
   ["album-37.jpg", "grounds", "BBQ-зона", "Купель среди зелени", "Купель Фурако в зелёном дворе", "portrait"],
-  ["album-39.jpg", "kitchen", "Кухня", "Кухня с выходом на террасу", "Кухня и дверь на террасу", "landscape"]
+  ["album-39.jpg", "kitchen", "Кухня", "Кухня с выходом на террасу", "Кухня и дверь на террасу", "landscape"],
+  ["sauna-04.jpg", "sauna", "Баня", "Парная готова к гостям", "Деревянные полки и веники в парной", "standard"],
+  ["sauna-05.jpg", "sauna", "Баня", "Стол для долгого вечера", "Угощения в комнате отдыха бани", "landscape"],
+  ["sauna-06.jpg", "sauna", "Баня", "Банные детали", "Банные шапки на деревянной стене", "portrait"],
+  ["sauna-08.jpg", "sauna", "Баня", "Всё приготовлено", "Плетёные тапочки для гостей бани", "standard"],
+  ["sauna-09.jpg", "sauna", "Баня", "Отдых всей компанией", "Терраса у бани, где можно отдыхать с питомцем", "landscape"],
+  ["sauna-10.jpg", "sauna", "Баня", "Аромат дубовых веников", "Дубовые веники и полки в парной", "portrait"]
 ].map(([file, category, categoryLabel, caption, alt, shape]) => ({
   file,
   category: category as GalleryCategory,
@@ -74,6 +85,7 @@ const filters: Array<[GalleryCategory | "all", string]> = [
   ["living", "Гостиная"],
   ["kitchen", "Кухня"],
   ["grounds", "BBQ-зона"],
+  ["sauna", "Баня"],
   ["bath", "Купель"],
   ["relaxation", "Зона отдыха"]
 ];

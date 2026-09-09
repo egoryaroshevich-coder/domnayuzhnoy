@@ -7,8 +7,8 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   applicationName: "Дом на Южной",
   title: { default: "Дом на Южной — аренда дома в Борисове", template: "%s | Дом на Южной" },
-  description: "Современный двухэтажный дом в Борисове для отдыха до 10 гостей: четыре спальни, оборудованная кухня, терраса и горячая купель Фурако.",
-  keywords: ["дом в аренду Борисов", "Дом на Южной", "дом с купелью", "Фурако Борисов", "дом для отдыха Беларусь"],
+  description: "Современный двухэтажный дом в Борисове для отдыха до 10 гостей: четыре спальни, баня, терраса и горячая купель Фурако.",
+  keywords: ["дом в аренду Борисов", "Дом на Южной", "дом с баней", "баня Борисов", "дом с купелью", "Фурако Борисов", "дом для отдыха Беларусь"],
   creator: "Дом на Южной",
   publisher: "Дом на Южной",
   category: "Аренда дома для отдыха",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
   openGraph: {
     title: "Дом на Южной — аренда дома в Борисове",
-    description: "Уютный двухэтажный дом с террасой и горячей купелью Фурако для отдыха до 10 гостей.",
+    description: "Уютный двухэтажный дом с баней, террасой и горячей купелью Фурако для отдыха до 10 гостей.",
     locale: "ru_RU",
     siteName: "Дом на Южной",
     type: "website",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Дом на Южной — аренда дома в Борисове",
-    description: "Дом с террасой и горячей купелью Фурако для отдыха до 10 гостей.",
+    description: "Дом с баней, террасой и горячей купелью Фурако для отдыха до 10 гостей.",
     images: ["/assets/logo-og.png"]
   }
 };
@@ -52,7 +52,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       addressRegion: "Минская область",
       addressCountry: "BY"
     },
-    telephone: "+375296479387"
+    telephone: "+375296479387",
+    amenityFeature: [
+      { "@type": "LocationFeatureSpecification", name: "Баня", value: true },
+      { "@type": "LocationFeatureSpecification", name: "Купель Фурако", value: true },
+      { "@type": "LocationFeatureSpecification", name: "Терраса", value: true }
+    ]
   };
 
   return (

@@ -35,7 +35,7 @@ export function Chapter({ index, label }: { index: string; label: string }) {
 export function BookingBand() {
   return (
     <section className="booking-band">
-      <span>Свободные даты уточняйте заранее</span>
+      <span>Дом, баня и купель по предварительной брони</span>
       <h2>Запланируйте отдых<br /><em>в Доме на Южной.</em></h2>
       <Link href="/booking" className="circle-link magnetic">Узнать<br />свободные<br />даты <ArrowUpRight /></Link>
     </section>

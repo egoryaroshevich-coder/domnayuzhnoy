@@ -14,7 +14,7 @@ export default function Home() {
           <Reveal><span className="kicker">Дом на Южной / отдых в центре Борисова</span></Reveal>
           <h1 className="statement-title"><span>Место, где </span><em>можно не спешить.</em></h1>
           <Reveal delay={.35} className="hero-bottom">
-            <p>Современный двухэтажный дом, уютная терраса<br />и горячая купель Фурако для отдыха до 10 гостей.</p>
+            <p>Современный двухэтажный дом, новая баня<br />и горячая купель Фурако для отдыха до 10 гостей.</p>
             <Link href="/booking" className="glass-button">Забронировать <ArrowUpRight /></Link>
           </Reveal>
         </div>
@@ -30,11 +30,11 @@ export default function Home() {
       <section className="intro editorial">
         <Chapter index="01" label="О доме" />
         <Reveal className="intro-title"><h2>В городе.<br /><em>Но вдали<br />от суеты.</em></h2></Reveal>
-        <Reveal className="intro-copy"><p>«Дом на Южной» находится в тихом районе Борисова, рядом с городскими удобствами. Его можно арендовать посуточно или на длительный срок для семейного отдыха, встречи с друзьями или камерного события.</p><Link href="/about">Посмотреть комнаты <ArrowUpRight /></Link></Reveal>
+        <Reveal className="intro-copy"><p>«Дом на Южной» находится в тихом районе Борисова, рядом с городскими удобствами. Дом, баня, терраса и купель создают готовое пространство для семейного отдыха, встречи с друзьями или камерного события.</p><Link href="/about">Посмотреть комнаты <ArrowUpRight /></Link></Reveal>
         <div className="image-duet">
           <Reveal className="duet-a"><Image src="/images/customer-updates/dining-table-setting.jpg" fill alt="Сервированный стол в Доме на Южной" sizes="55vw" /></Reveal>
           <Reveal className="duet-b" delay={.15}><Image src="/images/DKsDidmIIvD-6.jpg" fill alt="Купель Фурако и зона отдыха" sizes="35vw" /></Reveal>
-          <div className="floating-note">Дом. Терраса.<br />Купель.</div>
+          <div className="floating-note">Дом. Баня.<br />Купель.</div>
         </div>
       </section>
 
@@ -52,6 +52,17 @@ export default function Home() {
         <div className="feature-card glass-panel"><span>ФУРАКО / 03</span><h2>Горячая вода.<br />Свежий воздух.</h2><p>Купель нагревается до 38–42 °C, имеет джакузи-функцию и сохраняет комфортную температуру до четырёх часов.</p><Link href="/amenities">Все удобства дома <ArrowUpRight /></Link></div>
       </section>
 
+      <section className="home-sauna">
+        <div className="home-sauna-image"><Image src="/images/album/sauna-03.jpg" fill alt="Парная новой бани Дома на Южной" sizes="(max-width: 900px) 100vw, 55vw" /></div>
+        <Reveal className="home-sauna-copy">
+          <span>Новая баня / 04</span>
+          <h2>Живой пар.<br /><em>Время без спешки.</em></h2>
+          <p>Отдельная деревянная баня с парной и комнатой отдыха уже доступна гостям. Бронируйте её отдельно или вместе с горячей купелью.</p>
+          <div className="home-sauna-rates"><strong>250 BYN<small>баня без ограничения по времени</small></strong><strong>400 BYN<small>баня вместе с купелью</small></strong></div>
+          <Link href="/sauna">Посмотреть баню <ArrowUpRight /></Link>
+        </Reveal>
+      </section>
+
       <section className="testimonial">
         <span>Отзывы гостей</span>
         <blockquote>«Дом вживую даже лучше, чем на фото. Оснащён всем, что может понадобиться для жизни».</blockquote>
@@ -60,10 +71,10 @@ export default function Home() {
       </section>
 
       <section className="home-gallery editorial">
-        <Chapter index="04" label="Фотографии дома" />
-        <div className="gallery-heading"><h2>Комнаты, терраса<br /><em>и пространство для отдыха.</em></h2><Link href="/gallery">Открыть галерею <ArrowUpRight /></Link></div>
+        <Chapter index="05" label="Фотографии дома и бани" />
+        <div className="gallery-heading"><h2>Комнаты, баня<br /><em>и пространство для отдыха.</em></h2><Link href="/gallery">Открыть галерею <ArrowUpRight /></Link></div>
         <div className="strip">
-          {["customer-updates/kitchen-bright-vertical.jpg", "DEXszpDomze-6.jpg", "customer-updates/terrace-canopy.jpg"].map((src, i) => <div key={src} className={`strip-${i + 1}`}><Image src={`/images/${src}`} fill alt="Интерьер, терраса и зоны отдыха Дома на Южной" sizes="40vw" /></div>)}
+          {["customer-updates/kitchen-bright-vertical.jpg", "album/sauna-03.jpg", "album/sauna-07.jpg"].map((src, i) => <div key={src} className={`strip-${i + 1}`}><Image src={`/images/${src}`} fill alt="Дом, баня и купель Дома на Южной" sizes="40vw" /></div>)}
         </div>
       </section>
 

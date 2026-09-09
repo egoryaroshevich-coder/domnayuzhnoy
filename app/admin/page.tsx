@@ -107,6 +107,7 @@ export default function AdminPage() {
             <div className="booking-detail-grid" id="booking-detail-grid"></div>
             <div className="dialog-section-title"><span>Услуги и комментарий</span></div>
             <div className="dialog-services">
+              <label><input type="checkbox" name="edit-service" value="Баня" /> Баня</label>
               <label><input type="checkbox" name="edit-service" value="Купель" /> Купель</label>
               <label><input type="checkbox" name="edit-service" value="Банкет" /> Банкет</label>
               <label><input type="checkbox" name="edit-service" value="Повторная смена воды" /> Повторная смена воды</label>

@@ -10,6 +10,7 @@ import { SocialLinks } from "@/components/SocialLinks";
 
 const links = [
   ["Дом", "/about"],
+  ["Баня", "/sauna"],
   ["Галерея", "/gallery"],
   ["Услуги", "/amenities"],
   ["Цены", "/prices"],
@@ -86,7 +87,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       <AnimatePresence>
         {open && (
           <motion.div className="menu-panel" initial={{ clipPath: "inset(0 0 100% 0)" }} animate={{ clipPath: "inset(0)" }} exit={{ clipPath: "inset(0 0 100% 0)" }} transition={{ duration: .7, ease: [0.76, 0, 0.24, 1] }}>
-            <div className="menu-index">МЕНЮ / 09</div>
+            <div className="menu-index">МЕНЮ / 10</div>
             <div className="menu-links">
               {[["Главная", "/"], ...links, ["Бронирование", "/booking"]].map(([label, href], i) => (
                 <motion.div key={href} initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: .15 + i * .05 }}>
