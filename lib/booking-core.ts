@@ -1,5 +1,8 @@
 export const MAX_GUESTS = 20;
 export const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+export const HOUSE_PRICE_EFFECTIVE_DATE = "2026-11-01";
+
+export type HouseTariffPeriod = "not-selected" | "until-november" | "from-november" | "mixed";
 
 export type BusyRange = {
   start: string;
@@ -15,13 +18,14 @@ export type BookingCostInput = {
 
 export type BookingCosts = {
   houseCost: number;
+  houseTariff: HouseTariffPeriod;
   saunaCost: number;
   hottubCost: number;
   banquetCost: number;
   totalCost: number;
 };
 
-const WEEKDAY_HOUSE_PRICES: Record<number, number> = {
+export const WEEKDAY_HOUSE_PRICES: Readonly<Record<number, number>> = {
   2: 200,
   3: 300,
   4: 350,
@@ -33,7 +37,7 @@ const WEEKDAY_HOUSE_PRICES: Record<number, number> = {
   10: 700
 };
 
-const WEEKEND_HOUSE_PRICES: Record<number, number> = {
+export const WEEKEND_HOUSE_PRICES_UNTIL_NOVEMBER: Readonly<Record<number, number>> = {
   2: 200,
   3: 300,
   4: 400,
@@ -43,6 +47,18 @@ const WEEKEND_HOUSE_PRICES: Record<number, number> = {
   8: 650,
   9: 700,
   10: 750
+};
+
+export const WEEKEND_HOUSE_PRICES_FROM_NOVEMBER: Readonly<Record<number, number>> = {
+  2: 200,
+  3: 300,
+  4: 400,
+  5: 500,
+  6: 600,
+  7: 700,
+  8: 750,
+  9: 800,
+  10: 850
 };
 
 export function isIsoDate(value: unknown): value is string {
@@ -94,16 +110,33 @@ export function calculateBookingCosts({ checkIn, checkOut, guests, services }: B
   const checkOutDate = dateFromIso(checkOut);
   const pricedGuests = Math.min(10, Math.max(2, guests));
   let houseCost = 0;
+  let hasOctoberTariff = false;
+  let hasNovemberTariff = false;
 
   if (checkInDate && checkOutDate && checkOutDate > checkInDate) {
     const cursor = new Date(checkInDate);
     while (cursor < checkOutDate) {
       const day = cursor.getUTCDay();
-      const prices = day === 0 || day === 5 || day === 6 ? WEEKEND_HOUSE_PRICES : WEEKDAY_HOUSE_PRICES;
+      const date = cursor.toISOString().slice(0, 10);
+      const usesNovemberTariff = date >= HOUSE_PRICE_EFFECTIVE_DATE;
+      const weekendPrices = usesNovemberTariff
+        ? WEEKEND_HOUSE_PRICES_FROM_NOVEMBER
+        : WEEKEND_HOUSE_PRICES_UNTIL_NOVEMBER;
+      const prices = day === 0 || day === 5 || day === 6 ? weekendPrices : WEEKDAY_HOUSE_PRICES;
       houseCost += prices[pricedGuests] ?? prices[10];
+      hasNovemberTariff ||= usesNovemberTariff;
+      hasOctoberTariff ||= !usesNovemberTariff;
       cursor.setUTCDate(cursor.getUTCDate() + 1);
     }
   }
+
+  const houseTariff: HouseTariffPeriod = hasOctoberTariff && hasNovemberTariff
+    ? "mixed"
+    : hasNovemberTariff
+      ? "from-november"
+      : hasOctoberTariff
+        ? "until-november"
+        : "not-selected";
 
   const saunaSelected = services.includes("Баня");
   const hottubSelected = services.includes("Купель") || services.includes("Купель Фурако");
@@ -116,6 +149,7 @@ export function calculateBookingCosts({ checkIn, checkOut, guests, services }: B
 
   return {
     houseCost,
+    houseTariff,
     saunaCost,
     hottubCost,
     banquetCost,

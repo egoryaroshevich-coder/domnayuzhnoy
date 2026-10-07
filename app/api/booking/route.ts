@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { calculateBookingCosts, clean, dateFromIso, MAX_GUESTS, rangeHasConflict, uniqueServices } from "@/lib/booking-core";
+import { calculateBookingCosts, clean, dateFromIso, MAX_GUESTS, rangeHasConflict, uniqueServices, type HouseTariffPeriod } from "@/lib/booking-core";
 import { loadBookedDateSet } from "@/lib/booking-server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
@@ -64,6 +64,7 @@ function bookingMessage(booking: {
   checkOut: string;
   guests: number;
   services: string[];
+  houseTariff: HouseTariffPeriod;
   totalCost: number;
   comment: string;
 }) {
@@ -71,6 +72,11 @@ function bookingMessage(booking: {
   const servicesText = extraServices.length
     ? `Дополнительные услуги:\n${extraServices.map((service) => `- ${service}`).join("\n")}`
     : "Дополнительные услуги: Нет";
+  const tariffText = booking.houseTariff === "mixed"
+    ? "Тариф дома: октябрьские ночи по текущему прайсу, с 1 ноября — по новому"
+    : booking.houseTariff === "from-november"
+      ? "Тариф дома: новый прайс с 1 ноября 2026"
+      : "Тариф дома: текущий прайс до 31 октября 2026";
 
   return [
     "Новая заявка с сайта «Дом на Южной»",
@@ -83,6 +89,7 @@ function bookingMessage(booking: {
     `Выезд: ${booking.checkOut}`,
     "",
     `Гостей: ${booking.guests}`,
+    tariffText,
     "",
     servicesText,
     "",
@@ -200,7 +207,7 @@ export async function POST(request: Request) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         chat_id: chatId,
-        text: bookingMessage({ name, phone, telegram, checkIn, checkOut, guests, services, totalCost: costs.totalCost, comment }),
+        text: bookingMessage({ name, phone, telegram, checkIn, checkOut, guests, services, houseTariff: costs.houseTariff, totalCost: costs.totalCost, comment }),
         reply_markup: newBookingKeyboard(String(data.id)),
         disable_web_page_preview: true
       }),

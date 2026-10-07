@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { FormEvent, useMemo, useState } from "react";
 import { AvailabilityCalendar, DateRangeSelection } from "@/components/AvailabilityCalendar";
-import { calculateBookingCosts, nightsCount, uniqueServices } from "@/lib/booking-core";
+import { calculateBookingCosts, nightsCount, uniqueServices, type HouseTariffPeriod } from "@/lib/booking-core";
 
 const steps = [
   ["01", "Заявка", "Вы сообщаете даты, количество гостей и формат отдыха."],
@@ -47,6 +47,29 @@ const serviceOptions = [
   ["Размещение с питомцем", "Можно согласовать"],
   ["Нужна консультация", "Свяжемся с вами"]
 ];
+
+const tariffNotices: Record<HouseTariffPeriod, { eyebrow: string; title: string; text: string }> = {
+  "not-selected": {
+    eyebrow: "Изменение тарифа",
+    title: "До 31 октября — текущие цены",
+    text: "Для ночей с 1 ноября 2026 года сумма автоматически рассчитывается по новому прайсу."
+  },
+  "until-november": {
+    eyebrow: "Текущий прайс",
+    title: "Выбранные даты — по октябрьским ценам",
+    text: "Все выбранные ночи приходятся на период до 1 ноября 2026 года."
+  },
+  "from-november": {
+    eyebrow: "Новый прайс",
+    title: "Для выбранных дат действует новый тариф",
+    text: "Стоимость рассчитана по прайсу, который вступает в силу 1 ноября 2026 года."
+  },
+  mixed: {
+    eyebrow: "Переходный период",
+    title: "В расчёте учтены два тарифа",
+    text: "Ночи октября посчитаны по текущим ценам, а ночи с 1 ноября — по новому прайсу."
+  }
+};
 
 function validate(form: FormData) {
   const errors: FieldErrors = {};
@@ -91,6 +114,7 @@ export function BookingClient() {
   }), [dates.arrival, dates.departure, guests, services]);
   const nights = useMemo(() => nightsCount(dates.arrival, dates.departure), [dates.arrival, dates.departure]);
   const saunaPackageSelected = services.includes("Баня") && services.includes("Купель");
+  const tariffNotice = tariffNotices[costs.houseTariff];
 
   const toggleService = (service: string, selected: boolean) => {
     setSelectedServices((current) => selected
@@ -201,6 +225,15 @@ export function BookingClient() {
         </div>
 
         <form className="private-form booking-request-form" onSubmit={submit} noValidate>
+          <div className={`booking-price-change booking-price-change-${costs.houseTariff}`} aria-live="polite">
+            <span className="booking-price-change-icon"><CalendarDays /></span>
+            <div>
+              <small>{tariffNotice.eyebrow}</small>
+              <strong>{tariffNotice.title}</strong>
+              <p>{tariffNotice.text}</p>
+            </div>
+          </div>
+
           <div className={`booking-calendar-field ${fieldErrors.arrival || fieldErrors.departure ? "has-error" : ""}`}>
             <AvailabilityCalendar
               value={dates}

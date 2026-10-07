@@ -4,19 +4,24 @@ import { ArrowUpRight, BadgePercent, Bath, CalendarDays, Check, Flame, PartyPopp
 import { BookingBand, PageHero } from "@/components/UI";
 import { AvailabilityCalendar } from "@/components/AvailabilityCalendar";
 import { OffersCarousel, type Offer } from "@/components/OffersCarousel";
+import {
+  WEEKDAY_HOUSE_PRICES,
+  WEEKEND_HOUSE_PRICES_FROM_NOVEMBER,
+  WEEKEND_HOUSE_PRICES_UNTIL_NOVEMBER
+} from "@/lib/booking-core";
 
 export const metadata: Metadata = {
   title: "Цены и акции",
   description: "Актуальные цены на аренду Дома на Южной, баню, комплекс бани с купелью и банкет, акции и ближайшая доступность."
 };
 
-const weekdays = [
-  [2, 200], [3, 300], [4, 350], [5, 400], [6, 450], [7, 500], [8, 600], [9, 650], [10, 700]
-];
+function priceRows(prices: Readonly<Record<number, number>>) {
+  return Object.entries(prices).map(([guests, price]) => [Number(guests), price]);
+}
 
-const weekends = [
-  [2, 200], [3, 300], [4, 400], [5, 500], [6, 550], [7, 600], [8, 650], [9, 700], [10, 750]
-];
+const weekdays = priceRows(WEEKDAY_HOUSE_PRICES);
+const weekends = priceRows(WEEKEND_HOUSE_PRICES_FROM_NOVEMBER);
+const octoberWeekendChanges = priceRows(WEEKEND_HOUSE_PRICES_UNTIL_NOVEMBER).filter(([guests]) => guests >= 6);
 
 const offers: Offer[] = [
   { value: "−50%", title: "Для пар", text: "Скидка на второй день бронирования.", image: "DGQGOfsNNbm-1.jpg" },
@@ -44,7 +49,7 @@ export default function PricesPage() {
       <PageHero
         eyebrow="Цены / 05"
         title="Понятная стоимость. Никаких сюрпризов."
-        text="Цена зависит от дня недели, количества гостей и формата отдыха. Актуальную сумму лучше уточнить перед бронированием."
+        text="До 31 октября действует текущий прайс. Для бронирований с 1 ноября 2026 года стоимость рассчитывается по новым тарифам."
         image="/images/album/album-03.jpg"
       />
 
@@ -54,6 +59,24 @@ export default function PricesPage() {
           <h2>Выберите день<br /><em>и состав компании.</em></h2>
         </div>
         <p>Минимальная стоимость проживания — 200 BYN за двоих. В праздничные дни действует прайс выходного дня. Итоговую сумму и свободные даты подтверждает владелец.</p>
+      </section>
+
+      <section className="price-transition">
+        <div className="price-transition-icon"><CalendarDays /></div>
+        <div className="price-transition-copy">
+          <span>Обновление прайса / 01.11.2026</span>
+          <h2>Октябрь — по текущим ценам.<br /><em>Ноябрь и дальше — по новым.</em></h2>
+          <p>Форма бронирования сама определит тариф по выбранным ночам. Если период пересекает 1 ноября, каждая ночь будет рассчитана по своему прайсу.</p>
+        </div>
+        <div className="price-transition-current">
+          <small>Выходные до 31 октября</small>
+          <div>
+            {octoberWeekendChanges.map(([guests, price]) => (
+              <span key={guests}><b>{guests} гостей</b><strong>{price} BYN</strong></span>
+            ))}
+          </div>
+          <p>Для компаний до 5 гостей и для будних дней стоимость не меняется.</p>
+        </div>
       </section>
 
       <section className="price-cards editorial">
@@ -67,11 +90,11 @@ export default function PricesPage() {
         </article>
 
         <article className="price-card price-card-featured">
-          <div className="price-popular">Самый популярный тариф</div>
+          <div className="price-popular">Новый прайс · с 1 ноября</div>
           <div className="price-card-top"><CalendarDays /><span>Пт · Сб · Вс</span></div>
           <small>Выходные дни</small>
           <h2>От 200 BYN</h2>
-          <p>В праздничные дни также применяется этот прайс.</p>
+          <p>Новый тариф выходного дня. В праздничные дни также применяется этот прайс.</p>
           <PriceTable rows={weekends} />
           <Link href="/booking">Узнать свободные даты <ArrowUpRight /></Link>
         </article>

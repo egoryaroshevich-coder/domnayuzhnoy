@@ -516,8 +516,32 @@ body{font-size:16px}
 .booking-wellness-option>input:checked+.booking-wellness-card .booking-wellness-icon{background:#b89b68;color:#fff}
 .booking-wellness-option>input:checked+.booking-wellness-card .booking-wellness-copy small{color:#ffffff9c}
 .booking-wellness-option>input:checked+.booking-wellness-card .booking-wellness-check{border-color:#b89b68;background:#b89b68;color:#fff}
+.booking-price-change{grid-column:1/-1;display:grid;grid-template-columns:auto minmax(0,1fr);gap:17px;align-items:center;padding:20px 22px;border:1px solid #a98a5845;border-left:4px solid #a98a58;background:#eee6d8;transition:background .3s,color .3s,border-color .3s}
+.booking-price-change-icon{width:44px;height:44px;display:grid;place-items:center;border-radius:50%;background:#fff;color:#92754a}
+.booking-price-change-icon svg{width:20px;stroke-width:1.5}
+.booking-price-change small{display:block;margin-bottom:3px;color:#8d7045;font-size:8px;text-transform:uppercase;letter-spacing:.17em}
+.booking-price-change strong{display:block;font:23px/1.15 var(--serif);font-weight:400}
+.booking-price-change p{margin:5px 0 0;color:#68736c;font-size:10px;line-height:1.5}
+.booking-price-change-from-november{border-color:var(--ink);background:var(--ink);color:#fff}
+.booking-price-change-from-november .booking-price-change-icon{background:#b89b68;color:#fff}
+.booking-price-change-from-november small{color:#d5bd91}
+.booking-price-change-from-november p{color:#ffffffa3}
+.booking-price-change-mixed{background:#d8c7a8;border-color:#987748}
 .booking-services-note{display:flex;align-items:center;gap:9px;width:max-content;max-width:100%;margin:15px 0 0!important;padding:11px 14px;background:#dfd4c0;color:#5b4a2f;font-size:11px;line-height:1.5}
 .booking-services-note svg{width:16px;flex:0 0 auto}
+.price-transition{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(310px,.72fr);gap:38px;align-items:center;padding:58px max(28px,calc((100vw - 1320px)/2));background:#d8cdbc;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.price-transition-icon{width:62px;height:62px;display:grid;place-items:center;border:1px solid #8c704348;border-radius:50%;color:#8c7043}
+.price-transition-icon svg{width:27px;stroke-width:1.3}
+.price-transition-copy>span,.price-transition-current>small{color:#86693e;font-size:8px;text-transform:uppercase;letter-spacing:.18em}
+.price-transition-copy h2{margin:10px 0 12px;font:clamp(30px,3.2vw,48px)/1.05 var(--serif);font-weight:400}
+.price-transition-copy h2 em{color:#886b40;font-weight:400}
+.price-transition-copy p{max-width:650px;margin:0;color:#5f6963;font-size:11px}
+.price-transition-current{padding-left:34px;border-left:1px solid #17221d2b}
+.price-transition-current>div{margin-top:12px;border-top:1px solid #17221d26}
+.price-transition-current span{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:7px 0;border-bottom:1px solid #17221d1d}
+.price-transition-current b{font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.08em}
+.price-transition-current strong{font:18px var(--serif);font-weight:400;white-space:nowrap}
+.price-transition-current p{margin:12px 0 0;color:#68716c;font-size:9px}
 .extras-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .service-grid .service-card-5,.service-grid .service-card-6{grid-column:auto}
 
@@ -547,6 +571,8 @@ body{font-size:16px}
   .sauna-details article:last-child{grid-column:1/-1;border-top:1px solid #ffffff1c}
   .sauna-video-grid{grid-template-columns:repeat(3,minmax(240px,1fr));overflow-x:auto;padding-bottom:14px;scroll-snap-type:x mandatory}
   .sauna-video-grid figure{scroll-snap-align:start}
+  .price-transition{grid-template-columns:auto minmax(0,1fr)}
+  .price-transition-current{grid-column:1/-1;padding:25px 0 0;border-left:0;border-top:1px solid #17221d2b}
 }
 
 @media(max-width:800px){
@@ -577,8 +603,14 @@ body{font-size:16px}
   .sauna-video-grid{grid-template-columns:repeat(3,78vw);gap:12px;margin-right:-20px}
   .sauna-video-grid video{max-height:none}
   .booking-services-note{width:100%}
+  .booking-price-change{grid-template-columns:1fr;padding:18px}
+  .booking-price-change-icon{width:40px;height:40px}
   .booking-wellness-grid{grid-template-columns:1fr}
   .private-form .booking-wellness .booking-wellness-card{grid-template-columns:auto minmax(0,1fr) auto;column-gap:12px;min-height:108px;padding:16px}
   .booking-wellness-card>strong{grid-column:2;font-size:19px}
   .booking-wellness-check{grid-column:3;grid-row:1/3}
+  .price-transition{grid-template-columns:1fr;gap:20px;padding:42px 20px}
+  .price-transition-icon{width:52px;height:52px}
+  .price-transition-copy h2{font-size:36px}
+  .price-transition-current{grid-column:auto}
 }
