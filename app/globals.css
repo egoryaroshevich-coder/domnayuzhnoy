@@ -728,6 +728,14 @@ body{font-size:16px}
 .workation-final-image h2{max-width:1050px;margin:24px 0 0;font:clamp(52px,7vw,100px)/.95 var(--serif);font-weight:400;letter-spacing:-.045em}
 .desktop-nav{gap:clamp(14px,1.7vw,28px)}
 
+@media(min-width:1001px){
+  .booking-price-change{width:min(650px,calc(100% - 80px));justify-self:end;gap:12px;padding:14px 16px}
+  .booking-price-change-icon{width:36px;height:36px}
+  .booking-price-change-icon svg{width:17px}
+  .booking-price-change strong{font-size:20px}
+  .booking-price-change p{margin-top:3px;font-size:9px}
+}
+
 @media(max-width:1220px) and (min-width:1001px){
   .nav-shell{padding-left:24px;padding-right:24px}
   .brand{min-width:135px}
