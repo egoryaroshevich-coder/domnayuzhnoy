@@ -11,6 +11,7 @@ import { SocialLinks } from "@/components/SocialLinks";
 const links = [
   ["Дом", "/about"],
   ["Баня", "/sauna"],
+  ["Купель", "/hot-tub"],
   ["Workation", "/workation"],
   ["Галерея", "/gallery"],
   ["Услуги", "/amenities"],

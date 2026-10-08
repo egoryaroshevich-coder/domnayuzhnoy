@@ -494,6 +494,22 @@ body{font-size:16px}
 .sauna-video-grid figure{margin:0;min-width:0}
 .sauna-video-grid video{display:block;width:100%;aspect-ratio:9/16;max-height:720px;object-fit:cover;background:#050806;border:1px solid #ffffff1f}
 .sauna-video-grid figcaption{padding:15px 2px 0;color:#cbb58d;font-size:9px;text-transform:uppercase;letter-spacing:.17em}
+.hot-tub-page .page-hero-image img{object-position:center 58%}
+.hot-tub-page .page-hero-copy{max-width:1180px}
+.hot-tub-page .page-hero-copy p{max-width:650px}
+.hot-tub-intro-image img{object-position:center 58%}
+.hot-tub-evening{position:relative;min-height:780px;display:flex;align-items:flex-end;overflow:hidden;background:#101915;color:#fff}
+.hot-tub-evening>img{object-position:center 58%}
+.hot-tub-evening .hero-shade{background:linear-gradient(180deg,#08100b12 22%,#08100be0 100%)}
+.hot-tub-evening>div:last-child{position:relative;z-index:2;width:100%;padding:0 max(28px,calc((100vw - 1320px)/2)) 9vh}
+.hot-tub-evening>div:last-child>svg{width:35px;color:#d0b782;stroke-width:1.25}
+.hot-tub-evening span{display:block;margin-top:20px;color:#d0b782;font-size:9px;text-transform:uppercase;letter-spacing:.2em}
+.hot-tub-evening h2{max-width:1080px;margin:23px 0 20px;font:clamp(52px,7vw,100px)/.95 var(--serif);font-weight:400;letter-spacing:-.045em}
+.hot-tub-evening p{max-width:570px;margin:0;color:#ffffffa1;font-size:16px;line-height:1.7}
+.hot-tub-gallery-grid .sauna-gallery-item-1 img{object-position:center 60%}
+.hot-tub-gallery-grid .sauna-gallery-item-2 img{object-position:center 62%}
+.hot-tub-gallery-grid .sauna-gallery-item-3 img{object-position:center 50%}
+.hot-tub-gallery-grid .sauna-gallery-item-5 img{object-position:center 62%}
 .booking-wellness{grid-column:1/-1;margin:5px 0 0;padding:0;border:0}
 .booking-wellness>legend{display:block;margin:0 0 4px;color:#5f6a64;font-size:10px;text-transform:uppercase;letter-spacing:.15em}
 .booking-wellness-intro{margin:0 0 14px;color:#89918c;font-size:10px}
@@ -636,6 +652,12 @@ body{font-size:16px}
   .sauna-gallery-link{margin-left:0}
   .sauna-video-grid{grid-template-columns:repeat(3,78vw);gap:12px;margin-right:-20px}
   .sauna-video-grid video{max-height:none}
+  .hot-tub-page .page-hero-copy h1{font-size:52px}
+  .hot-tub-page .page-hero-copy p{font-size:16px}
+  .hot-tub-evening{min-height:680px}
+  .hot-tub-evening>div:last-child{padding:0 20px 70px}
+  .hot-tub-evening h2{font-size:50px}
+  .hot-tub-evening p{font-size:15px}
   .booking-services-note{width:100%}
   .booking-workation{padding:18px}
   .booking-workation-heading{grid-template-columns:1fr}

@@ -49,7 +49,7 @@ export default function Home() {
 
       <section className="feature-frame">
         <Image src="/images/DKsDidmIIvD-4.jpg" fill alt="Горячая купель Фурако и шезлонги" sizes="100vw" />
-        <div className="feature-card glass-panel"><span>ФУРАКО / 03</span><h2>Горячая вода.<br />Свежий воздух.</h2><p>Купель нагревается до 38–42 °C, имеет джакузи-функцию и сохраняет комфортную температуру до четырёх часов.</p><Link href="/amenities">Все удобства дома <ArrowUpRight /></Link></div>
+        <div className="feature-card glass-panel"><span>ФУРАКО / 03</span><h2>Горячая вода.<br />Свежий воздух.</h2><p>Купель нагревается до 38–42 °C, имеет джакузи-функцию и сохраняет комфортную температуру до четырёх часов.</p><Link href="/hot-tub">Подробнее о купели <ArrowUpRight /></Link></div>
       </section>
 
       <section className="home-sauna">
