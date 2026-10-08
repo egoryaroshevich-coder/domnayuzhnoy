@@ -252,7 +252,7 @@ export function BookingClient() {
       <section className="private-form-section">
         <div className="form-heading">
           <span>Узнать свободные даты</span>
-          <h2>Расскажите о<br />предстоящем отдыхе.</h2>
+          <h2>Расскажите<br />о вашем<br />отдыхе.</h2>
           <p>Поля со звёздочкой обязательны. После отправки заявки владелец подтвердит даты и окончательную стоимость.</p>
           <div className="form-assurance"><Check /> Данные используются только для связи по вашей заявке.</div>
         </div>
