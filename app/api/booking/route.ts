@@ -1,5 +1,16 @@
 import { NextResponse } from "next/server";
-import { calculateBookingCosts, clean, dateFromIso, MAX_GUESTS, rangeHasConflict, uniqueServices, type HouseTariffPeriod } from "@/lib/booking-core";
+import {
+  calculateBookingCosts,
+  clean,
+  dateFromIso,
+  isWorkationGiftService,
+  MAX_GUESTS,
+  rangeHasConflict,
+  uniqueServices,
+  WORKATION_GIFT_SERVICES,
+  type HouseTariffPeriod,
+  type WorkationGift
+} from "@/lib/booking-core";
 import { loadBookedDateSet } from "@/lib/booking-server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
@@ -65,10 +76,12 @@ function bookingMessage(booking: {
   guests: number;
   services: string[];
   houseTariff: HouseTariffPeriod;
+  workationGift: WorkationGift;
+  workationDiscount: number;
   totalCost: number;
   comment: string;
 }) {
-  const extraServices = booking.services.filter((service) => service && service !== "Дом");
+  const extraServices = booking.services.filter((service) => service && service !== "Дом" && !isWorkationGiftService(service));
   const servicesText = extraServices.length
     ? `Дополнительные услуги:\n${extraServices.map((service) => `- ${service}`).join("\n")}`
     : "Дополнительные услуги: Нет";
@@ -77,6 +90,11 @@ function bookingMessage(booking: {
     : booking.houseTariff === "from-november"
       ? "Тариф дома: новый прайс с 1 ноября 2026"
       : "Тариф дома: текущий прайс до 31 октября 2026";
+  const workationText = booking.workationGift === "sauna"
+    ? `Workation: баня в подарок (скидка ${booking.workationDiscount} BYN)`
+    : booking.workationGift === "hottub"
+      ? `Workation: купель в подарок (скидка ${booking.workationDiscount} BYN)`
+      : "";
 
   return [
     "Новая заявка с сайта «Дом на Южной»",
@@ -90,6 +108,7 @@ function bookingMessage(booking: {
     "",
     `Гостей: ${booking.guests}`,
     tariffText,
+    ...(workationText ? [workationText] : []),
     "",
     servicesText,
     "",
@@ -130,7 +149,7 @@ export async function POST(request: Request) {
   const adults = numberValue(payload.adults, numberValue(payload.guests, 1));
   const children = numberValue(payload.children, 0);
   const guests = adults + children;
-  const services = uniqueServices(payload.services);
+  const requestedServices = uniqueServices(payload.services);
   const comment = clean(payload.comment ?? payload.message, 1000);
   const phoneDigits = phone.replace(/\D/g, "");
   const checkInDate = dateFromIso(checkIn);
@@ -150,7 +169,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: errors[0] }, { status: 400 });
   }
 
-  const costs = calculateBookingCosts({ checkIn, checkOut, guests, services });
+  const costs = calculateBookingCosts({ checkIn, checkOut, guests, services: requestedServices });
+  const services = requestedServices.filter((service) => !isWorkationGiftService(service));
+  if (costs.workationGift) services.push(WORKATION_GIFT_SERVICES[costs.workationGift]);
   const token = process.env.TELEGRAM_BOT_TOKEN ?? process.env.BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID ?? process.env.CHAT_ID;
 
@@ -180,7 +201,7 @@ export async function POST(request: Request) {
       children,
       guests,
       services,
-      hot_tub: services.includes("Купель"),
+      hot_tub: services.includes("Купель") || costs.workationGift === "hottub",
       banquet: services.includes("Банкет"),
       total_price: costs.totalCost,
       comment: comment || null,
@@ -207,7 +228,20 @@ export async function POST(request: Request) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         chat_id: chatId,
-        text: bookingMessage({ name, phone, telegram, checkIn, checkOut, guests, services, houseTariff: costs.houseTariff, totalCost: costs.totalCost, comment }),
+        text: bookingMessage({
+          name,
+          phone,
+          telegram,
+          checkIn,
+          checkOut,
+          guests,
+          services,
+          houseTariff: costs.houseTariff,
+          workationGift: costs.workationGift,
+          workationDiscount: costs.workationDiscount,
+          totalCost: costs.totalCost,
+          comment
+        }),
         reply_markup: newBookingKeyboard(String(data.id)),
         disable_web_page_preview: true
       }),

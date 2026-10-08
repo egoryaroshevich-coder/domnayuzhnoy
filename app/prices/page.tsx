@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, BadgePercent, Bath, CalendarDays, Check, Flame, PartyPopper, Users } from "lucide-react";
+import { ArrowUpRight, BadgePercent, Bath, CalendarDays, Check, Flame, Gift, Laptop, PartyPopper, Users } from "lucide-react";
 import { BookingBand, PageHero } from "@/components/UI";
 import { AvailabilityCalendar } from "@/components/AvailabilityCalendar";
 import { OffersCarousel, type Offer } from "@/components/OffersCarousel";
@@ -12,7 +13,7 @@ import {
 
 export const metadata: Metadata = {
   title: "Цены и акции",
-  description: "Актуальные цены на аренду Дома на Южной, баню, комплекс бани с купелью и банкет, акции и ближайшая доступность."
+  description: "Актуальные цены на аренду Дома на Южной, баню и купель, акция Workation и ближайшая доступность."
 };
 
 function priceRows(prices: Readonly<Record<number, number>>) {
@@ -146,7 +147,34 @@ export default function PricesPage() {
       </section>
 
       <section className="offers-section price-offers editorial">
-        <div className="price-offers-title"><BadgePercent /><span>Акции</span><h2>Приятные условия<br /><em>для вашего отдыха.</em></h2><p>Иногда доступны специальные условия для пар, праздников, отдыха с питомцами и бронирования в ближайшие даты. Актуальные акции уточняйте при выборе дат.</p></div>
+        <div className="price-offers-title"><BadgePercent /><span>Акции</span><h2>Приятные условия<br /><em>для вашего отдыха.</em></h2><p>Workation — наше постоянное предложение для тех, кто хочет совместить рабочие будни с несколькими днями загородного отдыха.</p></div>
+
+        <article className="workation-feature">
+          <div className="workation-feature-image">
+            <Image
+              src="/images/offers/workation.webp"
+              fill
+              alt="Workation в Доме на Южной — баня или купель в подарок"
+              sizes="(max-width: 900px) 100vw, 50vw"
+            />
+          </div>
+          <div className="workation-feature-copy">
+            <div className="workation-feature-label"><Laptop /><span>Постоянное предложение</span></div>
+            <h2>Work + Vacation<br />= <em>Workation</em></h2>
+            <p className="workation-feature-lead">Смените привычный домашний офис на уютный загородный дом, где рабочие задачи легко уживаются с маленьким отпуском.</p>
+
+            <div className="workation-feature-benefits">
+              <div><CalendarDays /><span>Бронируйте</span><strong>от 3 будних ночей подряд</strong></div>
+              <div><Gift /><span>Получайте</span><strong>баню или купель в подарок</strong></div>
+            </div>
+
+            <p>Утром — кофе на террасе, днём — работа в спокойной обстановке, а вечером — заслуженный отдых в горячей купели или бане. Брать отпуск для этого необязательно: предложение доступно всем гостям.</p>
+            <p>Бонус действует каждый раз, когда внутри бронирования есть минимум три последовательные ночи с понедельника по четверг.</p>
+            <small>* Одна топка бани или купели на выбор предоставляется для компании от 2 человек.</small>
+            <Link href="/booking">Выбрать будние даты <ArrowUpRight /></Link>
+          </div>
+        </article>
+
         <OffersCarousel offers={offers} />
       </section>
 
@@ -161,7 +189,7 @@ export default function PricesPage() {
 
       <section className="price-note">
         <Users />
-        <p>Дом рассчитан на 10 спальных мест. Баню, комплекс с купелью, день рождения, банкет, размещение с питомцами и другие услуги согласовывайте заранее.</p>
+        <p>Дом рассчитан на 10 спальных мест. Подарок Workation применяется автоматически при выборе подходящих дат; баню, купель, банкет, размещение с питомцами и другие услуги согласовывайте заранее.</p>
       </section>
 
       <BookingBand />

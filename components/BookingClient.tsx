@@ -10,7 +10,9 @@ import {
   CircleAlert,
   Clock3,
   Flame,
+  Gift,
   KeyRound,
+  Laptop,
   LoaderCircle,
   Phone,
   UserRound,
@@ -19,7 +21,15 @@ import {
 } from "lucide-react";
 import { FormEvent, useMemo, useState } from "react";
 import { AvailabilityCalendar, DateRangeSelection } from "@/components/AvailabilityCalendar";
-import { calculateBookingCosts, nightsCount, uniqueServices, type HouseTariffPeriod } from "@/lib/booking-core";
+import {
+  calculateBookingCosts,
+  getWorkationEligibility,
+  nightsCount,
+  uniqueServices,
+  WORKATION_GIFT_SERVICES,
+  type HouseTariffPeriod,
+  type WorkationGift
+} from "@/lib/booking-core";
 
 const steps = [
   ["01", "Заявка", "Вы сообщаете даты, количество гостей и формат отдыха."],
@@ -104,17 +114,39 @@ export function BookingClient() {
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [workationGift, setWorkationGift] = useState<Exclude<WorkationGift, null>>("sauna");
   const guests = adults + children;
-  const services = useMemo(() => uniqueServices(selectedServices), [selectedServices]);
+  const nights = useMemo(() => nightsCount(dates.arrival, dates.departure), [dates.arrival, dates.departure]);
+  const workation = useMemo(
+    () => getWorkationEligibility(dates.arrival, dates.departure, guests),
+    [dates.arrival, dates.departure, guests]
+  );
+  const activeWorkationGift = workation.eligible ? workationGift : null;
+  const giftedService = activeWorkationGift === "sauna" ? "Баня" : activeWorkationGift === "hottub" ? "Купель" : null;
+  const workationGiftService = activeWorkationGift ? WORKATION_GIFT_SERVICES[activeWorkationGift] : null;
+  const services = useMemo(() => uniqueServices([
+    ...selectedServices.filter((service) => service !== giftedService),
+    ...(workationGiftService ? [workationGiftService] : [])
+  ]), [giftedService, selectedServices, workationGiftService]);
   const costs = useMemo(() => calculateBookingCosts({
     checkIn: dates.arrival,
     checkOut: dates.departure,
     guests,
     services
   }), [dates.arrival, dates.departure, guests, services]);
-  const nights = useMemo(() => nightsCount(dates.arrival, dates.departure), [dates.arrival, dates.departure]);
-  const saunaPackageSelected = services.includes("Баня") && services.includes("Купель");
+  const saunaIncluded = services.includes("Баня") || costs.workationGift === "sauna";
+  const hottubIncluded = services.includes("Купель") || costs.workationGift === "hottub";
+  const saunaPackageSelected = saunaIncluded && hottubIncluded;
   const tariffNotice = tariffNotices[costs.houseTariff];
+  const workationStatus = !dates.arrival || !dates.departure
+    ? "Выберите минимум три ночи подряд с понедельника по четверг."
+    : !workation.hasEnoughGuests
+      ? "Добавьте второго гостя — предложение действует для компании от двух человек."
+      : !workation.hasEnoughNights
+        ? `Сейчас выбрано ${nights} ${nights === 1 ? "ночь" : "ночи"}. Для подарка нужно минимум три.`
+        : !workation.hasConsecutiveWeekdays
+          ? "В выбранном периоде нет трёх будних ночей подряд. Выберите последовательность ночей с понедельника по четверг."
+          : "Условия выполнены. Выберите, что подготовить в подарок.";
 
   const toggleService = (service: string, selected: boolean) => {
     setSelectedServices((current) => selected
@@ -192,6 +224,7 @@ export function BookingClient() {
       setAdults(1);
       setChildren(0);
       setSelectedServices([]);
+      setWorkationGift("sauna");
       setDone(true);
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Не удалось отправить заявку. Попробуйте ещё раз.");
@@ -288,29 +321,77 @@ export function BookingClient() {
             <div><UserRound /><input id="booking-telegram" name="telegram" placeholder="@username" /></div>
           </div>
 
+          <section className={`booking-workation ${workation.eligible ? "booking-workation-active" : ""}`} aria-live="polite">
+            <div className="booking-workation-heading">
+              <span className="booking-workation-icon"><Laptop /></span>
+              <div>
+                <small>Постоянное предложение</small>
+                <h3>Workation</h3>
+                <p>От трёх будних ночей подряд — одна топка бани или купели на выбор в подарок.</p>
+              </div>
+            </div>
+
+            <div className="booking-workation-status">
+              {workation.eligible ? <Gift /> : <CalendarDays />}
+              <span>{workationStatus}</span>
+            </div>
+
+            {workation.eligible && (
+              <div className="booking-workation-choices" role="radiogroup" aria-label="Выберите подарок Workation">
+                <label>
+                  <input
+                    type="radio"
+                    name="services"
+                    value={WORKATION_GIFT_SERVICES.sauna}
+                    checked={activeWorkationGift === "sauna"}
+                    onChange={() => setWorkationGift("sauna")}
+                  />
+                  <span><Flame /><b>Баня</b><small>Одна топка в подарок</small><Check /></span>
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="services"
+                    value={WORKATION_GIFT_SERVICES.hottub}
+                    checked={activeWorkationGift === "hottub"}
+                    onChange={() => setWorkationGift("hottub")}
+                  />
+                  <span><Bath /><b>Купель</b><small>Одна топка в подарок</small><Check /></span>
+                </label>
+              </div>
+            )}
+
+            <small className="booking-workation-rule">Для компании от 2 человек. В периоде должно быть не меньше трёх последовательных ночей, приходящихся на пн–чт.</small>
+          </section>
+
           <fieldset className="booking-wellness">
             <legend>Отдельные услуги</legend>
             <p className="booking-wellness-intro">Баню и купель можно выбрать независимо друг от друга</p>
             <div className="booking-wellness-grid">
-              {wellnessOptions.map(({ service, price, detail, Icon }) => (
-                <label className="booking-wellness-option" key={service}>
-                  <input
-                    type="checkbox"
-                    name="services"
-                    value={service}
-                    checked={selectedServices.includes(service)}
-                    onChange={(event) => toggleService(service, event.target.checked)}
-                  />
-                  <span className="booking-wellness-card">
-                    <span className="booking-wellness-icon"><Icon /></span>
-                    <span className="booking-wellness-copy"><b>{service}</b><small>{detail}</small></span>
-                    <strong>{price}</strong>
-                    <span className="booking-wellness-check"><Check /></span>
-                  </span>
-                </label>
-              ))}
+              {wellnessOptions.map(({ service, price, detail, Icon }) => {
+                const isGifted = giftedService === service;
+                return (
+                  <label className={`booking-wellness-option ${isGifted ? "is-gifted" : ""}`} key={service}>
+                    <input
+                      type="checkbox"
+                      name="services"
+                      value={service}
+                      checked={!isGifted && selectedServices.includes(service)}
+                      disabled={isGifted}
+                      onChange={(event) => toggleService(service, event.target.checked)}
+                    />
+                    <span className="booking-wellness-card">
+                      <span className="booking-wellness-icon"><Icon /></span>
+                      <span className="booking-wellness-copy"><b>{service}</b><small>{detail}</small></span>
+                      <strong>{isGifted ? "В подарок" : price}</strong>
+                      <span className="booking-wellness-check">{isGifted ? <Gift /> : <Check />}</span>
+                    </span>
+                  </label>
+                );
+              })}
             </div>
-            {saunaPackageSelected && <p className="booking-services-note"><Check /> Вы выбрали баню и купель отдельно. Для двух услуг действует цена комплекса 400 BYN.</p>}
+            {saunaPackageSelected && costs.workationGift && <p className="booking-services-note"><Gift /> По Workation {costs.workationGift === "sauna" ? "баня" : "купель"} идёт в подарок. Оплачивается только вторая выбранная услуга.</p>}
+            {saunaPackageSelected && !costs.workationGift && <p className="booking-services-note"><Check /> Вы выбрали баню и купель отдельно. Для двух услуг действует цена комплекса 400 BYN.</p>}
           </fieldset>
 
           <fieldset className="booking-services">
@@ -335,10 +416,10 @@ export function BookingClient() {
             <div><span>Даты</span><b>{nights ? `${nights} ${nights === 1 ? "сутки" : "суток"}` : "Выберите период"}</b></div>
             <div><span>Гости</span><b>{guests}</b></div>
             <div><span>Дом</span><b>{costs.houseCost} BYN</b></div>
-            <div><span>Баня</span><b>{costs.saunaCost} BYN</b></div>
-            <div><span>Купель</span><b>{costs.hottubCost} BYN</b></div>
+            <div><span>Баня</span><b className={costs.workationGift === "sauna" ? "booking-estimate-gift" : ""}>{costs.workationGift === "sauna" ? "Подарок" : `${costs.saunaCost} BYN`}</b></div>
+            <div><span>Купель</span><b className={costs.workationGift === "hottub" ? "booking-estimate-gift" : ""}>{costs.workationGift === "hottub" ? "Подарок" : `${costs.hottubCost} BYN`}</b></div>
             <div><span>Банкет</span><b>{costs.banquetCost} BYN</b></div>
-            <div className="booking-estimate-total"><span>Предварительно</span><b>{costs.totalCost} BYN</b></div>
+            <div className="booking-estimate-total"><span>{costs.workationGift ? `Предварительно · подарок −${costs.workationDiscount} BYN` : "Предварительно"}</span><b>{costs.totalCost} BYN</b></div>
           </div>
 
           <label className="booking-honeypot" aria-hidden="true">Сайт<input name="website" tabIndex={-1} autoComplete="off" /></label>

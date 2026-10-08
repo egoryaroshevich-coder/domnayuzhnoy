@@ -1,8 +1,21 @@
 export const MAX_GUESTS = 20;
 export const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 export const HOUSE_PRICE_EFFECTIVE_DATE = "2026-11-01";
+export const WORKATION_GIFT_SERVICES = {
+  sauna: "Workation: баня в подарок",
+  hottub: "Workation: купель в подарок"
+} as const;
 
 export type HouseTariffPeriod = "not-selected" | "until-november" | "from-november" | "mixed";
+export type WorkationGift = keyof typeof WORKATION_GIFT_SERVICES | null;
+
+export type WorkationEligibility = {
+  eligible: boolean;
+  nights: number;
+  hasEnoughGuests: boolean;
+  hasEnoughNights: boolean;
+  hasConsecutiveWeekdays: boolean;
+};
 
 export type BusyRange = {
   start: string;
@@ -22,6 +35,9 @@ export type BookingCosts = {
   saunaCost: number;
   hottubCost: number;
   banquetCost: number;
+  workationEligible: boolean;
+  workationGift: WorkationGift;
+  workationDiscount: number;
   totalCost: number;
 };
 
@@ -105,6 +121,35 @@ export function uniqueServices(services: unknown) {
   return [...new Set(["Дом", ...normalized])].slice(0, 16);
 }
 
+export function isWorkationGiftService(service: string) {
+  return Object.values(WORKATION_GIFT_SERVICES).includes(service as (typeof WORKATION_GIFT_SERVICES)[keyof typeof WORKATION_GIFT_SERVICES]);
+}
+
+export function getWorkationEligibility(checkIn: string, checkOut: string, guests: number): WorkationEligibility {
+  const nights = nightsCount(checkIn, checkOut);
+  const stayDates = nights > 0 ? enumerateStayDates(checkIn, checkOut) : [];
+  let consecutiveWeekdays = 0;
+  let longestWeekdayRun = 0;
+
+  for (const date of stayDates) {
+    const day = dateFromIso(date)?.getUTCDay();
+    consecutiveWeekdays = day !== undefined && day >= 1 && day <= 4 ? consecutiveWeekdays + 1 : 0;
+    longestWeekdayRun = Math.max(longestWeekdayRun, consecutiveWeekdays);
+  }
+
+  const hasEnoughGuests = guests >= 2;
+  const hasEnoughNights = nights >= 3;
+  const hasConsecutiveWeekdays = longestWeekdayRun >= 3;
+
+  return {
+    eligible: hasEnoughGuests && hasEnoughNights && hasConsecutiveWeekdays,
+    nights,
+    hasEnoughGuests,
+    hasEnoughNights,
+    hasConsecutiveWeekdays
+  };
+}
+
 export function calculateBookingCosts({ checkIn, checkOut, guests, services }: BookingCostInput): BookingCosts {
   const checkInDate = dateFromIso(checkIn);
   const checkOutDate = dateFromIso(checkOut);
@@ -138,14 +183,27 @@ export function calculateBookingCosts({ checkIn, checkOut, guests, services }: B
         ? "until-november"
         : "not-selected";
 
-  const saunaSelected = services.includes("Баня");
-  const hottubSelected = services.includes("Купель") || services.includes("Купель Фурако");
+  const workation = getWorkationEligibility(checkIn, checkOut, guests);
+  const requestedWorkationGift: WorkationGift = services.includes(WORKATION_GIFT_SERVICES.sauna)
+    ? "sauna"
+    : services.includes(WORKATION_GIFT_SERVICES.hottub)
+      ? "hottub"
+      : null;
+  const workationGift = workation.eligible ? requestedWorkationGift : null;
+  const saunaSelected = services.includes("Баня") || workationGift === "sauna";
+  const hottubSelected = services.includes("Купель") || services.includes("Купель Фурако") || workationGift === "hottub";
   const waterChangeSelected = services.includes("Повторная смена воды");
-  const saunaCost = saunaSelected ? 250 : 0;
+  const saunaBaseCost = saunaSelected ? 250 : 0;
   const hottubBaseCost = !hottubSelected ? 0 : saunaSelected ? 150 : guests <= 2 ? 150 : guests <= 4 ? 200 : 250;
-  const hottubCost = hottubBaseCost + (hottubSelected && waterChangeSelected ? 80 : 0);
+  const saunaCost = workationGift === "sauna" ? 0 : saunaBaseCost;
+  const hottubCost = (workationGift === "hottub" ? 0 : hottubBaseCost) + (hottubSelected && waterChangeSelected ? 80 : 0);
   const banquetPricePerGuest = guests <= 10 ? 50 : guests <= 15 ? 45 : 40;
   const banquetCost = services.includes("Банкет") ? guests * banquetPricePerGuest : 0;
+  const workationDiscount = workationGift === "sauna"
+    ? saunaBaseCost
+    : workationGift === "hottub"
+      ? hottubBaseCost
+      : 0;
 
   return {
     houseCost,
@@ -153,6 +211,9 @@ export function calculateBookingCosts({ checkIn, checkOut, guests, services }: B
     saunaCost,
     hottubCost,
     banquetCost,
+    workationEligible: workation.eligible,
+    workationGift,
+    workationDiscount,
     totalCost: houseCost + saunaCost + hottubCost + banquetCost
   };
 }

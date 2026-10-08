@@ -542,6 +542,59 @@ body{font-size:16px}
 .price-transition-current b{font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.08em}
 .price-transition-current strong{font:18px var(--serif);font-weight:400;white-space:nowrap}
 .price-transition-current p{margin:12px 0 0;color:#68716c;font-size:9px}
+.workation-feature{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);margin-top:72px;background:var(--ink);color:#fff}
+.workation-feature-image{position:relative;aspect-ratio:4/5;min-width:0;overflow:hidden;background:#c9c0b2}
+.workation-feature-image img{object-fit:cover}
+.workation-feature-copy{display:flex;min-width:0;flex-direction:column;padding:clamp(42px,6vw,82px)}
+.workation-feature-label{display:flex;align-items:center;gap:12px;color:#d4bd90;font-size:9px;text-transform:uppercase;letter-spacing:.18em}
+.workation-feature-label svg{width:20px;stroke-width:1.4}
+.workation-feature-copy h2{margin:42px 0 24px;font:clamp(48px,5.6vw,82px)/.98 var(--serif);font-weight:400;letter-spacing:-.035em}
+.workation-feature-copy h2 em{color:#d4bd90;font-weight:400}
+.workation-feature-copy>p{max-width:610px;margin:16px 0 0;color:#ffffffa6;font-size:14px;line-height:1.75}
+.workation-feature-copy .workation-feature-lead{margin-top:0;color:#fff;font-size:18px}
+.workation-feature-benefits{display:grid;grid-template-columns:1fr 1fr;margin:38px 0 18px;border-top:1px solid #ffffff25;border-bottom:1px solid #ffffff25}
+.workation-feature-benefits>div{padding:25px 22px 25px 0}
+.workation-feature-benefits>div+div{padding-left:24px;border-left:1px solid #ffffff25}
+.workation-feature-benefits svg{width:24px;color:#d4bd90;stroke-width:1.3}
+.workation-feature-benefits span{display:block;margin-top:22px;color:#ffffff78;font-size:8px;text-transform:uppercase;letter-spacing:.17em}
+.workation-feature-benefits strong{display:block;margin-top:7px;font:24px/1.15 var(--serif);font-weight:400}
+.workation-feature-copy>small{display:block;max-width:610px;margin-top:28px;padding-top:18px;border-top:1px solid #ffffff20;color:#ffffff78;font-size:9px;line-height:1.6}
+.workation-feature-copy>a{display:flex;align-items:center;justify-content:space-between;gap:20px;width:100%;margin-top:auto;padding:22px 0 6px;border-bottom:1px solid #ffffff65;text-transform:uppercase;letter-spacing:.14em;font-size:9px}
+.workation-feature-copy>a svg{width:17px}
+.booking-workation{grid-column:1/-1;padding:24px;border:1px solid #9e815352;background:#eee6d8;transition:background .3s,color .3s,border-color .3s}
+.booking-workation-heading{display:grid;grid-template-columns:auto minmax(0,1fr);gap:17px;align-items:center}
+.booking-workation-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:50%;background:#fff;color:#92754a}
+.booking-workation-icon svg{width:22px;stroke-width:1.4}
+.booking-workation-heading small{display:block;color:#8d7045;font-size:8px;text-transform:uppercase;letter-spacing:.17em}
+.booking-workation-heading h3{margin:4px 0 0;font:34px/1 var(--serif);font-weight:400}
+.booking-workation-heading p{margin:7px 0 0;color:#68736c;font-size:11px;line-height:1.55}
+.booking-workation-status{display:flex;align-items:center;gap:10px;margin-top:18px;padding:13px 15px;background:#ffffff96;color:#5d665f;font-size:10px;line-height:1.5}
+.booking-workation-status svg{width:17px;flex:0 0 auto;color:#92754a;stroke-width:1.5}
+.booking-workation-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.private-form .booking-workation-choices label{position:relative;display:block;margin:0;color:inherit;cursor:pointer}
+.private-form .booking-workation-choices input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.private-form .booking-workation-choices label>span{display:grid;grid-template-columns:auto minmax(0,1fr) auto;column-gap:12px;align-items:center;min-height:82px;padding:15px;border:1px solid #ffffff35;background:#ffffff0c;transition:.25s}
+.booking-workation-choices label>span>svg:first-child{grid-row:1/3;width:22px;color:#d4bd90;stroke-width:1.5}
+.booking-workation-choices b{font:21px var(--serif);font-weight:400;text-transform:none;letter-spacing:0}
+.booking-workation-choices small{grid-column:2;color:#ffffff88;font-size:8px;text-transform:none;letter-spacing:0}
+.booking-workation-choices label>span>svg:last-child{grid-column:3;grid-row:1/3;width:22px;height:22px;padding:5px;border:1px solid #ffffff38;border-radius:50%;color:transparent}
+.booking-workation-choices input:checked+span{border-color:#d4bd90;background:#d4bd901a}
+.booking-workation-choices input:focus-visible+span{outline:2px solid #d4bd90;outline-offset:3px}
+.booking-workation-choices input:checked+span>svg:last-child{border-color:#d4bd90;background:#d4bd90;color:var(--ink)}
+.booking-workation-rule{display:block;margin-top:13px;color:#6e766f;font-size:8px;line-height:1.5}
+.booking-workation-active{border-color:var(--ink);background:var(--ink);color:#fff}
+.booking-workation-active .booking-workation-icon{background:#b89b68;color:#fff}
+.booking-workation-active .booking-workation-heading small{color:#d5bd91}
+.booking-workation-active .booking-workation-heading p{color:#ffffffa3}
+.booking-workation-active .booking-workation-status{background:#ffffff0c;color:#fff}
+.booking-workation-active .booking-workation-status svg{color:#d4bd90}
+.booking-workation-active .booking-workation-rule{color:#ffffff78}
+.booking-wellness-option.is-gifted{cursor:default}
+.booking-wellness-option.is-gifted .booking-wellness-card{border-color:#9b7c48;background:#e3d5bb;color:var(--ink)}
+.booking-wellness-option.is-gifted .booking-wellness-icon{background:#9b7c48;color:#fff}
+.booking-wellness-option.is-gifted .booking-wellness-copy small{color:#5f6963}
+.booking-wellness-option.is-gifted .booking-wellness-check{border-color:#9b7c48;background:#9b7c48;color:#fff}
+.booking-estimate b.booking-estimate-gift{color:#8d7045}
 .extras-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .service-grid .service-card-5,.service-grid .service-card-6{grid-column:auto}
 
@@ -573,6 +626,7 @@ body{font-size:16px}
   .sauna-video-grid figure{scroll-snap-align:start}
   .price-transition{grid-template-columns:auto minmax(0,1fr)}
   .price-transition-current{grid-column:1/-1;padding:25px 0 0;border-left:0;border-top:1px solid #17221d2b}
+  .workation-feature{grid-template-columns:1fr}
 }
 
 @media(max-width:800px){
@@ -603,6 +657,18 @@ body{font-size:16px}
   .sauna-video-grid{grid-template-columns:repeat(3,78vw);gap:12px;margin-right:-20px}
   .sauna-video-grid video{max-height:none}
   .booking-services-note{width:100%}
+  .booking-workation{padding:18px}
+  .booking-workation-heading{grid-template-columns:1fr}
+  .booking-workation-icon{width:42px;height:42px}
+  .booking-workation-choices{grid-template-columns:1fr}
+  .workation-feature{margin-top:45px}
+  .workation-feature-copy{padding:44px 24px}
+  .workation-feature-copy h2{margin-top:32px;font-size:49px}
+  .workation-feature-copy .workation-feature-lead{font-size:16px}
+  .workation-feature-benefits{grid-template-columns:1fr}
+  .workation-feature-benefits>div{padding:23px 0}
+  .workation-feature-benefits>div+div{padding-left:0;border-left:0;border-top:1px solid #ffffff25}
+  .workation-feature-copy>a{margin-top:34px}
   .booking-price-change{grid-template-columns:1fr;padding:18px}
   .booking-price-change-icon{width:40px;height:40px}
   .booking-wellness-grid{grid-template-columns:1fr}
