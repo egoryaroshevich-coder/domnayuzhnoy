@@ -10,12 +10,12 @@ export function Reveal({ children, className = "", delay = 0 }: { children: Reac
   return <motion.div className={className} initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-10%" }} transition={{ duration: .9, delay, ease: [0.16, 1, 0.3, 1] }}>{children}</motion.div>;
 }
 
-export function PageHero({ eyebrow, title, text, image }: { eyebrow: string; title: string; text: string; image: string }) {
+export function PageHero({ eyebrow, title, text, image, className = "" }: { eyebrow: string; title: string; text: string; image: string; className?: string }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "22%"]);
   return (
-    <section className="page-hero" ref={ref}>
+    <section className={`page-hero ${className}`.trim()} ref={ref}>
       <motion.div className="page-hero-image" style={{ y }}><Image src={image} fill priority alt={title} sizes="100vw" /></motion.div>
       <div className="hero-shade" />
       <div className="page-hero-copy">

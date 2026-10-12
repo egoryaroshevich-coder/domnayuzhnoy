@@ -54,6 +54,7 @@ export default function PricesPage() {
   return (
     <>
       <PageHero
+        className="prices-hero"
         eyebrow="Цены / 05"
         title="Понятная стоимость. Никаких сюрпризов."
         text="С 31 декабря 2026 года по 2 января 2027 года действует фиксированный новогодний пакет — 3000 BYN независимо от количества гостей."
