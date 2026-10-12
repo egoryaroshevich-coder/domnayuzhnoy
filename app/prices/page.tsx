@@ -7,12 +7,13 @@ import { OffersCarousel, type Offer } from "@/components/OffersCarousel";
 import {
   WEEKDAY_HOUSE_PRICES,
   WEEKEND_HOUSE_PRICES_FROM_NOVEMBER,
-  WEEKEND_HOUSE_PRICES_UNTIL_NOVEMBER
+  WEEKEND_HOUSE_PRICES_UNTIL_NOVEMBER,
+  NEW_YEAR_PACKAGE_PRICE
 } from "@/lib/booking-core";
 
 export const metadata: Metadata = {
   title: "Цены и акции",
-  description: "Актуальные цены на аренду Дома на Южной, баню и купель, действующие акции и ближайшая доступность."
+  description: "Актуальные цены на аренду Дома на Южной, включая новогодний пакет 31.12.2026–02.01.2027 за 3000 BYN, баню, купель и действующие акции."
 };
 
 function priceRows(prices: Readonly<Record<number, number>>) {
@@ -49,7 +50,7 @@ export default function PricesPage() {
       <PageHero
         eyebrow="Цены / 05"
         title="Понятная стоимость. Никаких сюрпризов."
-        text="До 31 октября действует текущий прайс. Для бронирований с 1 ноября 2026 года стоимость рассчитывается по новым тарифам."
+        text="С 31 декабря 2026 года по 2 января 2027 года действует фиксированный новогодний пакет — 3000 BYN независимо от количества гостей."
         image="/images/album/album-03.jpg"
       />
 
@@ -58,7 +59,22 @@ export default function PricesPage() {
           <span>Проживание</span>
           <h2>Выберите день<br /><em>и состав компании.</em></h2>
         </div>
-        <p>Минимальная стоимость проживания — 200 BYN за двоих. В праздничные дни действует прайс выходного дня. Итоговую сумму и свободные даты подтверждает владелец.</p>
+        <p>Минимальная стоимость проживания — 200 BYN за двоих. На новогодний период действует отдельный фиксированный пакет. Итоговую сумму и свободные даты подтверждает владелец.</p>
+      </section>
+
+      <section className="new-year-price">
+        <div className="new-year-price-icon"><CalendarDays /></div>
+        <div className="new-year-price-copy">
+          <span>Новогодний пакет / 31.12.2026–02.01.2027</span>
+          <h2>Новый год<br /><em>в Доме на Южной.</em></h2>
+          <p>Фиксированная стоимость за новогодний период. Количество гостей не влияет на цену проживания.</p>
+        </div>
+        <div className="new-year-price-value">
+          <small>Стоимость проживания</small>
+          <strong>{NEW_YEAR_PACKAGE_PRICE} <span>BYN</span></strong>
+          <p>Баня и купель — по предварительному запросу.</p>
+          <Link href="/booking">Выбрать даты <ArrowUpRight /></Link>
+        </div>
       </section>
 
       <section className="price-transition">
@@ -94,7 +110,7 @@ export default function PricesPage() {
           <div className="price-card-top"><CalendarDays /><span>Пт · Сб · Вс</span></div>
           <small>Выходные дни</small>
           <h2>От 200 BYN</h2>
-          <p>Новый тариф выходного дня. В праздничные дни также применяется этот прайс.</p>
+          <p>Новый тариф выходного дня. Для периода 31.12–02.01 действует отдельный новогодний пакет.</p>
           <PriceTable rows={weekends} />
           <Link href="/booking">Узнать свободные даты <ArrowUpRight /></Link>
         </article>

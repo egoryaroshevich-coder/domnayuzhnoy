@@ -76,6 +76,8 @@ function bookingMessage(booking: {
   guests: number;
   services: string[];
   houseTariff: HouseTariffPeriod;
+  newYearPackageApplied: boolean;
+  wellnessOnRequest: boolean;
   workationGift: WorkationGift;
   workationDiscount: number;
   totalCost: number;
@@ -85,7 +87,9 @@ function bookingMessage(booking: {
   const servicesText = extraServices.length
     ? `Дополнительные услуги:\n${extraServices.map((service) => `- ${service}`).join("\n")}`
     : "Дополнительные услуги: Нет";
-  const tariffText = booking.houseTariff === "mixed"
+  const tariffText = booking.newYearPackageApplied
+    ? "Тариф дома: новогодний пакет 31.12.2026–02.01.2027 — 3000 BYN"
+    : booking.houseTariff === "mixed"
     ? "Тариф дома: октябрьские ночи по текущему прайсу, с 1 ноября — по новому"
     : booking.houseTariff === "from-november"
       ? "Тариф дома: новый прайс с 1 ноября 2026"
@@ -95,6 +99,9 @@ function bookingMessage(booking: {
     : booking.workationGift === "hottub"
       ? `Workation: купель в подарок (скидка ${booking.workationDiscount} BYN)`
       : "";
+  const wellnessText = booking.wellnessOnRequest
+    ? "Баня / купель на новогодние даты: стоимость по запросу"
+    : "";
 
   return [
     "Новая заявка с сайта «Дом на Южной»",
@@ -109,6 +116,7 @@ function bookingMessage(booking: {
     `Гостей: ${booking.guests}`,
     tariffText,
     ...(workationText ? [workationText] : []),
+    ...(wellnessText ? [wellnessText] : []),
     "",
     servicesText,
     "",
@@ -237,6 +245,8 @@ export async function POST(request: Request) {
           guests,
           services,
           houseTariff: costs.houseTariff,
+          newYearPackageApplied: costs.newYearPackageApplied,
+          wellnessOnRequest: costs.wellnessOnRequest,
           workationGift: costs.workationGift,
           workationDiscount: costs.workationDiscount,
           totalCost: costs.totalCost,

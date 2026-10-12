@@ -543,8 +543,13 @@ body{font-size:16px}
 .booking-price-change-from-november small{color:#d5bd91}
 .booking-price-change-from-november p{color:#ffffffa3}
 .booking-price-change-mixed{background:#d8c7a8;border-color:#987748}
+.booking-price-change-new-year{border-color:#c2a36d;background:var(--ink);color:#fff}
+.booking-price-change-new-year .booking-price-change-icon{background:#b89b68;color:#fff}
+.booking-price-change-new-year small{color:#d9c18f}
+.booking-price-change-new-year p{color:#ffffffa3}
 .booking-services-note{display:flex;align-items:center;gap:9px;width:max-content;max-width:100%;margin:15px 0 0!important;padding:11px 14px;background:#dfd4c0;color:#5b4a2f;font-size:11px;line-height:1.5}
 .booking-services-note svg{width:16px;flex:0 0 auto}
+.booking-services-note-new-year{background:#14201b;color:#fff}
 .price-transition{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(310px,.72fr);gap:38px;align-items:center;padding:58px max(28px,calc((100vw - 1320px)/2));background:#d8cdbc;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .price-transition-icon{width:62px;height:62px;display:grid;place-items:center;border:1px solid #8c704348;border-radius:50%;color:#8c7043}
 .price-transition-icon svg{width:27px;stroke-width:1.3}
@@ -592,6 +597,22 @@ body{font-size:16px}
 .booking-wellness-option.is-gifted .booking-wellness-copy small{color:#5f6963}
 .booking-wellness-option.is-gifted .booking-wellness-check{border-color:#9b7c48;background:#9b7c48;color:#fff}
 .booking-estimate b.booking-estimate-gift{color:#8d7045}
+.booking-estimate b.booking-estimate-request{color:#8d7045;font-family:var(--sans);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.booking-wellness-option.is-new-year .booking-wellness-card{border-color:#9b7c4866;background:#f2ecdf}
+.booking-wellness-option.is-new-year .booking-wellness-card>strong{font-family:var(--sans);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#8d7045}
+.new-year-price{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(330px,.72fr);gap:46px;align-items:center;padding:82px max(28px,calc((100vw - 1320px)/2));background:var(--ink);color:#fff}
+.new-year-price-icon{width:68px;height:68px;display:grid;place-items:center;border:1px solid #d5b97e66;border-radius:50%;color:#d5b97e}
+.new-year-price-icon svg{width:29px;stroke-width:1.25}
+.new-year-price-copy>span,.new-year-price-value>small{color:#d5b97e;font-size:9px;text-transform:uppercase;letter-spacing:.18em}
+.new-year-price-copy h2{margin:18px 0 20px;font:clamp(44px,5vw,74px)/1.02 var(--serif);font-weight:400;letter-spacing:-.04em}
+.new-year-price-copy h2 em{color:#d5b97e;font-weight:400}
+.new-year-price-copy p{max-width:560px;margin:0;color:#ffffff88;font-size:15px;line-height:1.75}
+.new-year-price-value{padding-left:38px;border-left:1px solid #ffffff24}
+.new-year-price-value strong{display:block;margin:12px 0 16px;color:#d5b97e;font:clamp(64px,6vw,92px)/.9 var(--serif);font-weight:400}
+.new-year-price-value strong span{font:12px var(--sans);letter-spacing:.14em}
+.new-year-price-value p{margin:0;color:#ffffff8a;font-size:13px}
+.new-year-price-value a{display:flex;align-items:center;justify-content:space-between;margin-top:30px;padding:14px 0;border-top:1px solid #ffffff32;text-transform:uppercase;letter-spacing:.14em;font-size:9px}
+.new-year-price-value a svg{width:17px}
 .extras-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .service-grid .service-card-5,.service-grid .service-card-6{grid-column:auto}
 
@@ -623,6 +644,8 @@ body{font-size:16px}
   .sauna-video-grid figure{scroll-snap-align:start}
   .price-transition{grid-template-columns:auto minmax(0,1fr)}
   .price-transition-current{grid-column:1/-1;padding:25px 0 0;border-left:0;border-top:1px solid #17221d2b}
+  .new-year-price{grid-template-columns:auto minmax(0,1fr)}
+  .new-year-price-value{grid-column:1/-1;padding:30px 0 0;border-left:0;border-top:1px solid #ffffff24}
 }
 
 @media(max-width:800px){
@@ -673,6 +696,10 @@ body{font-size:16px}
   .price-transition-icon{width:52px;height:52px}
   .price-transition-copy h2{font-size:36px}
   .price-transition-current{grid-column:auto}
+  .new-year-price{grid-template-columns:1fr;gap:26px;padding:64px 20px}
+  .new-year-price-icon{width:56px;height:56px}
+  .new-year-price-copy h2{font-size:48px}
+  .new-year-price-value{grid-column:auto}
 }
 
 /* Workation */

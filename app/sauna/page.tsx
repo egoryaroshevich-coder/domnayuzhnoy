@@ -90,6 +90,7 @@ export default function SaunaPage() {
             <strong>400 <span>BYN</span></strong>
             <p><Check /> Единая стоимость комплекса</p>
             <p><Check /> Баня и горячая купель Фурако</p>
+            <p><Check /> 31.12–02.01 — стоимость по запросу</p>
             <Link href="/booking">Забронировать комплекс <ArrowUpRight /></Link>
           </article>
         </div>

@@ -1,6 +1,9 @@
 export const MAX_GUESTS = 20;
 export const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 export const HOUSE_PRICE_EFFECTIVE_DATE = "2026-11-01";
+export const NEW_YEAR_PACKAGE_START = "2026-12-31";
+export const NEW_YEAR_PACKAGE_END = "2027-01-02";
+export const NEW_YEAR_PACKAGE_PRICE = 3000;
 export const WORKATION_GIFT_SERVICES = {
   sauna: "Workation: баня в подарок",
   hottub: "Workation: купель в подарок"
@@ -32,6 +35,8 @@ export type BookingCostInput = {
 export type BookingCosts = {
   houseCost: number;
   houseTariff: HouseTariffPeriod;
+  newYearPackageApplied: boolean;
+  wellnessOnRequest: boolean;
   saunaCost: number;
   hottubCost: number;
   banquetCost: number;
@@ -150,6 +155,12 @@ export function getWorkationEligibility(checkIn: string, checkOut: string, guest
   };
 }
 
+export function isNewYearPackageStay(checkIn: string, checkOut: string) {
+  return enumerateStayDates(checkIn, checkOut).some(
+    (date) => date >= NEW_YEAR_PACKAGE_START && date < NEW_YEAR_PACKAGE_END
+  );
+}
+
 export function calculateBookingCosts({ checkIn, checkOut, guests, services }: BookingCostInput): BookingCosts {
   const checkInDate = dateFromIso(checkIn);
   const checkOutDate = dateFromIso(checkOut);
@@ -157,6 +168,7 @@ export function calculateBookingCosts({ checkIn, checkOut, guests, services }: B
   let houseCost = 0;
   let hasOctoberTariff = false;
   let hasNovemberTariff = false;
+  let newYearPackageApplied = false;
 
   if (checkInDate && checkOutDate && checkOutDate > checkInDate) {
     const cursor = new Date(checkInDate);
@@ -167,13 +179,20 @@ export function calculateBookingCosts({ checkIn, checkOut, guests, services }: B
       const weekendPrices = usesNovemberTariff
         ? WEEKEND_HOUSE_PRICES_FROM_NOVEMBER
         : WEEKEND_HOUSE_PRICES_UNTIL_NOVEMBER;
-      const prices = day === 0 || day === 5 || day === 6 ? weekendPrices : WEEKDAY_HOUSE_PRICES;
-      houseCost += prices[pricedGuests] ?? prices[10];
+      const isNewYearPackageNight = date >= NEW_YEAR_PACKAGE_START && date < NEW_YEAR_PACKAGE_END;
+      if (isNewYearPackageNight) {
+        newYearPackageApplied = true;
+      } else {
+        const prices = day === 0 || day === 5 || day === 6 ? weekendPrices : WEEKDAY_HOUSE_PRICES;
+        houseCost += prices[pricedGuests] ?? prices[10];
+      }
       hasNovemberTariff ||= usesNovemberTariff;
       hasOctoberTariff ||= !usesNovemberTariff;
       cursor.setUTCDate(cursor.getUTCDate() + 1);
     }
   }
+
+  if (newYearPackageApplied) houseCost += NEW_YEAR_PACKAGE_PRICE;
 
   const houseTariff: HouseTariffPeriod = hasOctoberTariff && hasNovemberTariff
     ? "mixed"
@@ -189,14 +208,17 @@ export function calculateBookingCosts({ checkIn, checkOut, guests, services }: B
     : services.includes(WORKATION_GIFT_SERVICES.hottub)
       ? "hottub"
       : null;
-  const workationGift = workation.eligible ? requestedWorkationGift : null;
+  const workationGift = workation.eligible && !newYearPackageApplied ? requestedWorkationGift : null;
   const saunaSelected = services.includes("Баня") || workationGift === "sauna";
   const hottubSelected = services.includes("Купель") || services.includes("Купель Фурако") || workationGift === "hottub";
   const waterChangeSelected = services.includes("Повторная смена воды");
   const saunaBaseCost = saunaSelected ? 250 : 0;
   const hottubBaseCost = !hottubSelected ? 0 : saunaSelected ? 150 : guests <= 2 ? 150 : guests <= 4 ? 200 : 250;
-  const saunaCost = workationGift === "sauna" ? 0 : saunaBaseCost;
-  const hottubCost = (workationGift === "hottub" ? 0 : hottubBaseCost) + (hottubSelected && waterChangeSelected ? 80 : 0);
+  const wellnessOnRequest = newYearPackageApplied && (saunaSelected || hottubSelected);
+  const saunaCost = newYearPackageApplied || workationGift === "sauna" ? 0 : saunaBaseCost;
+  const hottubCost = newYearPackageApplied
+    ? 0
+    : (workationGift === "hottub" ? 0 : hottubBaseCost) + (hottubSelected && waterChangeSelected ? 80 : 0);
   const banquetPricePerGuest = guests <= 10 ? 50 : guests <= 15 ? 45 : 40;
   const banquetCost = services.includes("Банкет") ? guests * banquetPricePerGuest : 0;
   const workationDiscount = workationGift === "sauna"
@@ -208,10 +230,12 @@ export function calculateBookingCosts({ checkIn, checkOut, guests, services }: B
   return {
     houseCost,
     houseTariff,
+    newYearPackageApplied,
+    wellnessOnRequest,
     saunaCost,
     hottubCost,
     banquetCost,
-    workationEligible: workation.eligible,
+    workationEligible: workation.eligible && !newYearPackageApplied,
     workationGift,
     workationDiscount,
     totalCost: houseCost + saunaCost + hottubCost + banquetCost

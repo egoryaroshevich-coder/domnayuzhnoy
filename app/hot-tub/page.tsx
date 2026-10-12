@@ -90,6 +90,7 @@ export default function HotTubPage() {
             <p><Check /> Единая стоимость комплекса</p>
             <p><Check /> Баня без ограничения по времени</p>
             <p><Check /> Горячая купель Фурако</p>
+            <p><Check /> 31.12–02.01 — стоимость по запросу</p>
             <Link href="/booking">Забронировать комплекс <ArrowUpRight /></Link>
           </article>
         </div>
