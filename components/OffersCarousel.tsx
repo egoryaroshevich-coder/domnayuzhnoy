@@ -10,6 +10,8 @@ export type Offer = {
   title: string;
   text: string;
   image: string;
+  href?: string;
+  linkLabel?: string;
 };
 
 export function OffersCarousel({ offers }: { offers: Offer[] }) {
@@ -37,7 +39,9 @@ export function OffersCarousel({ offers }: { offers: Offer[] }) {
           <strong>{offer.value}</strong>
           <h3>{offer.title}</h3>
           <p>{offer.text}</p>
-          <Link href="/booking">Уточнить условия <ArrowUpRight /></Link>
+          <Link href={offer.href ?? "/booking"}>
+            {offer.linkLabel ?? "Уточнить условия"} <ArrowUpRight />
+          </Link>
         </article>
       </div>
 

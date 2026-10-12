@@ -7,7 +7,6 @@ import { OffersCarousel, type Offer } from "@/components/OffersCarousel";
 import {
   WEEKDAY_HOUSE_PRICES,
   WEEKEND_HOUSE_PRICES_FROM_NOVEMBER,
-  WEEKEND_HOUSE_PRICES_UNTIL_NOVEMBER,
   NEW_YEAR_PACKAGE_PRICE
 } from "@/lib/booking-core";
 
@@ -22,9 +21,16 @@ function priceRows(prices: Readonly<Record<number, number>>) {
 
 const weekdays = priceRows(WEEKDAY_HOUSE_PRICES);
 const weekends = priceRows(WEEKEND_HOUSE_PRICES_FROM_NOVEMBER);
-const octoberWeekendChanges = priceRows(WEEKEND_HOUSE_PRICES_UNTIL_NOVEMBER).filter(([guests]) => guests >= 6);
 
 const offers: Offer[] = [
+  {
+    value: "Подарок",
+    title: "Workation",
+    text: "При бронировании от трёх будних ночей подряд — одна топка бани или купели на выбор в подарок.",
+    image: "workation/terrace-work.webp",
+    href: "/workation",
+    linkLabel: "Подробнее о Workation"
+  },
   { value: "−50%", title: "Для пар", text: "Скидка на второй день бронирования.", image: "DGQGOfsNNbm-1.jpg" },
   { value: "Подарок", title: "День рождения", text: "Бонус на проживание имениннику. Условия уточняйте при выборе даты.", image: "offers/birthday-bonus.jpg" },
   { value: "−20%", title: "Срочное бронирование", text: "При бронировании за один день до заезда или непосредственно в день заезда.", image: "DF7csgDMZnU-1.jpg" },
@@ -77,24 +83,6 @@ export default function PricesPage() {
         </div>
       </section>
 
-      <section className="price-transition">
-        <div className="price-transition-icon"><CalendarDays /></div>
-        <div className="price-transition-copy">
-          <span>Обновление прайса / 01.11.2026</span>
-          <h2>Октябрь — по текущим ценам.<br /><em>Ноябрь и дальше — по новым.</em></h2>
-          <p>Форма бронирования сама определит тариф по выбранным ночам. Если период пересекает 1 ноября, каждая ночь будет рассчитана по своему прайсу.</p>
-        </div>
-        <div className="price-transition-current">
-          <small>Выходные до 31 октября</small>
-          <div>
-            {octoberWeekendChanges.map(([guests, price]) => (
-              <span key={guests}><b>{guests} гостей</b><strong>{price} BYN</strong></span>
-            ))}
-          </div>
-          <p>Для компаний до 5 гостей и для будних дней стоимость не меняется.</p>
-        </div>
-      </section>
-
       <section className="price-cards editorial">
         <article className="price-card">
           <div className="price-card-top"><CalendarDays /><span>Пн · Вт · Ср · Чт</span></div>
@@ -106,11 +94,11 @@ export default function PricesPage() {
         </article>
 
         <article className="price-card price-card-featured">
-          <div className="price-popular">Новый прайс · с 1 ноября</div>
+          <div className="price-popular">Актуальный прайс</div>
           <div className="price-card-top"><CalendarDays /><span>Пт · Сб · Вс</span></div>
           <small>Выходные дни</small>
           <h2>От 200 BYN</h2>
-          <p>Новый тариф выходного дня. Для периода 31.12–02.01 действует отдельный новогодний пакет.</p>
+          <p>Актуальный тариф выходного дня. Для периода 31.12–02.01 действует отдельный новогодний пакет.</p>
           <PriceTable rows={weekends} />
           <Link href="/booking">Узнать свободные даты <ArrowUpRight /></Link>
         </article>
@@ -162,7 +150,7 @@ export default function PricesPage() {
       </section>
 
       <section className="offers-section price-offers editorial">
-        <div className="price-offers-title"><BadgePercent /><span>Акции</span><h2>Приятные условия<br /><em>для вашего отдыха.</em></h2><p>Скидки для пар, бонус ко дню рождения, срочное бронирование и возможность приехать вместе с питомцем.</p></div>
+        <div className="price-offers-title"><BadgePercent /><span>Акции</span><h2>Приятные условия<br /><em>для вашего отдыха.</em></h2><p>Workation с баней или купелью в подарок, скидки для пар, бонус ко дню рождения и другие приятные условия.</p></div>
 
         <OffersCarousel offers={offers} />
       </section>
